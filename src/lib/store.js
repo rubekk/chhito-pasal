@@ -1,5 +1,12 @@
 import { writable } from 'svelte/store';
 
+export const userLocation= writable({
+    coords: [],
+    place: "",
+    distance: 0,
+    deliveryTime: 0
+});
+
 export const productsData= writable([
     {   
         productId: crypto.randomUUID(),
@@ -24,3 +31,5 @@ export const productsData= writable([
 ]);
 
 export const cartProducts= writable([]);
+
+export const showCart= writable(false);

@@ -1,30 +1,50 @@
 <script>
     import { cartProducts } from "$lib/store";
     
-    export let productData= {
-        productId: crypto.randomUUID,
+    export let productData = {
+        productId: crypto.randomUUID(),
         productName: "Product name",
         price: 100
     }
 
-    let sCartProducts= [];
+    let sCartProducts = [];
+    let productInCart = false;
+    let cartProduct = null; 
 
-    cartProducts.subscribe(value =>{
-        sCartProducts= value
-    })
+    cartProducts.subscribe(value => {
+        sCartProducts = value;
+        cartProduct = sCartProducts.find(product => product.productId === productData.productId);
+        productInCart = !!cartProduct;
+    });
 
-    const handleClick= ()=>{
-        if(sCartProducts.some(product=> product.productId== productData.productId)){
-            let i= sCartProducts.findIndex(product=> product.productId== productData.productId);
+    const handleAddClick = () => {
+        if (sCartProducts.some(product => product.productId === productData.productId)) return;
 
-            sCartProducts[i].count++;
+        let newProduct = { ...productData, count: 1, totalPrice: productData.price };
+        cartProducts.set([...sCartProducts, newProduct]);
+    }
+
+    const handleCartMinus = () => {
+        let i = sCartProducts.findIndex(product => product.productId === productData.productId);
+        if (i < 0) return;
+
+        if (sCartProducts[i].count > 0) {
+            sCartProducts[i].count--;
+            sCartProducts[i].totalPrice = sCartProducts[i].count * sCartProducts[i].price;
         }
-        else{
-            productData.count= 1;
-            sCartProducts.push(productData);
-        }
+        if (sCartProducts[i].count === 0) sCartProducts.splice(i, 1);
 
-        cartProducts.set(sCartProducts);
+        cartProducts.set([...sCartProducts]);
+    }
+
+    const handleCartPlus = () => {
+        let i = sCartProducts.findIndex(product => product.productId === productData.productId);
+        if (i < 0) return;
+
+        sCartProducts[i].count++;
+        sCartProducts[i].totalPrice = sCartProducts[i].count * sCartProducts[i].price;
+
+        cartProducts.set([...sCartProducts]);
     }
 </script>
 
@@ -33,7 +53,19 @@
     <div class="product-text">
         <div class="product-name">{productData.productName}</div>
         <div class="product-text-below">
-            <div class="product-add-btn" on:click={handleClick}>Add</div>
+            {#if !productInCart}
+            <div class="product-add-btn" on:click={handleAddClick}>Add</div>
+            {:else}
+            <div class="cart-product-add-minus-btns">
+                <button class="cart-product-minus-btn" on:click={handleCartMinus}>
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+                <div class="cart-product-count">{cartProduct?.count}</div>
+                <button class="cart-product-plus-btn" on:click={handleCartPlus}>
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+            {/if}
             <div class="product-price">Rs. {productData.price}</div>
         </div>
     </div>
@@ -42,7 +74,7 @@
 <style>
     .product{
         padding: .5rem;
-        width: 175px;
+        width: 200px;
         border: 1px solid #dcdcdc;
         border-radius: 3px;
     }
@@ -65,5 +97,22 @@
         border: 1px solid #dcdcdc;
         border-radius: 3px;
         cursor: pointer;
+    }
+    .cart-product-add-minus-btns{
+        display: flex;
+    }
+    .cart-product-add-minus-btns button, .cart-product-count{
+        width: 25px;
+        height: 25px;
+        outline: none;
+        border: 1px solid #dcdcdc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .cart-product-count{
+        width: 40px;
+        border-left: none;
+        border-right: none;
     }
 </style>
