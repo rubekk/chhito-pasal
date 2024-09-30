@@ -22,7 +22,6 @@ export const getPlaceName = async (latitude, longitude) => {
 };
 
 export const getTravelDetails = async (start, end, customSpeed) => {
-    // haversine
     const toRad = (value) => (value * Math.PI) / 180;
 
     const R = 6371; 
@@ -41,31 +40,14 @@ export const getTravelDetails = async (start, end, customSpeed) => {
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const routeFactor = 1.5;
 
-    const straightLineDistance = R * c;;
+    const straightLineDistance = R * c;
     const straightLineDistanceInMeters = straightLineDistance * 1000; 
-
-    if (straightLineDistanceInMeters <= 300) {
-        const travelTimeInHours = straightLineDistance / customSpeed; 
-        const travelTimeInMinutes = travelTimeInHours * 60; 
-        
-        return [ straightLineDistance, Math.floor(travelTimeInMinutes) ];
-    } 
-    else {
-    // OSRM
-        const url = `https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=false&geometries=geojson`;
-       
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.routes && data.routes.length > 0) {
-            const routeDistanceInMeters = data.routes[0].distance;
-            const routeDistanceInKm = routeDistanceInMeters / 1000;
-            const travelTimeInHours = routeDistanceInKm / customSpeed;
-            const travelTimeInMinutes = travelTimeInHours * 60;
-            
-            return [ routeDistanceInKm, Math.floor(travelTimeInMinutes) ];
-        } 
-    }
+    
+    const travelTimeInHours = straightLineDistance * routeFactor / customSpeed; 
+    const travelTimeInMinutes = travelTimeInHours * 60 < 2 ? 3 : travelTimeInHours * 60; 
+    
+    return [ straightLineDistance, Math.floor(travelTimeInMinutes) ];
 };
 

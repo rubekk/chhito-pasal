@@ -1,35 +1,66 @@
 <script>
     import "./app.css";
+    import { onMount } from "svelte";
     import Header from "../components/Header.svelte";
     import Product from "../components/Product.svelte";
     import Cart from "../components/Cart.svelte";
     import LocationPopup from "../components/LocationPopup.svelte";
-    import { productsData, showCart } from "$lib/store";
+    import { authStore, productsData, showCart, userLocation } from "$lib/store";
+    import { auth } from "$lib/firebaseConfig"; 
+    import { onAuthStateChanged } from "firebase/auth";
 
+    let sAuthStore = {
+        loggedIn: false,
+        user: null
+    };
     let sProductsData= [];
     let sShowLocationPopup= false;
     let sShowCart= false;
+    let deliveryAvailable = true;
 
+    authStore.subscribe(value => {
+        sAuthStore = value
+    })
     productsData.subscribe(value =>{
         sProductsData= value
     })
     showCart.subscribe(value =>{
         sShowCart=value
     })
+    userLocation.subscribe(value => {
+        deliveryAvailable = value.deliveryAvailable
+    })
+
+    onMount(() => {
+        onAuthStateChanged(auth, (currentUser) => {
+            if(currentUser) {
+                sAuthStore.loggedIn = true;
+                sAuthStore.user = currentUser;
+            }
+            else{
+                sAuthStore.loggedIn = false;
+                sAuthStore.user = null;
+            }
+        });
+    });
 </script>
 
 <Header />
+{#if deliveryAvailable}
 <div class="products-container">
     {#each sProductsData as productData}
     <Product productData={productData} />
     {/each}
 </div>
+{:else}
+Sorry, we are not available at your location yet!
+{/if}
 {#if sShowLocationPopup}
 <div class="location-popup-container">
     <LocationPopup />
 </div>
 {/if}
-{#if sShowCart}
+{#if sShowCart && deliveryAvailable}
 <div class="cart-container">
     <Cart />
 </div>

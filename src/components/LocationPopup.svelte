@@ -1,71 +1,100 @@
 <script>
-    import { onMount, tick } from "svelte"; 
-    import { browser } from '$app/environment';
-    import { userLocation } from "$lib/store";
+    import { onMount, tick } from "svelte";
+    import { browser } from "$app/environment";
+    import { storeLocation, userLocation } from "$lib/store";
     import { getPlaceName, getTravelDetails } from "$lib/utils";
 
-    const storeLatLng = [27.665322, 85.330719];
-
+    let sStoreLocation = [];
     let sUserLocation = {
         coords: [],
         place: "",
         distance: 0,
-        deliveryTime: 0
+        deliveryTime: 0,
+        deliveryAvailable: false,
     };
-    let leaflet; 
+    let leaflet;
     let map;
     let marker = null;
     let showMap = false;
     let mapElem;
     let mapCoords = [];
-    let isLocationSelected = false; 
+    let isLocationSelected = false;
+    let geoErrorMessage = "";
+    let clickedPlaceName = "";
+
+    storeLocation.subscribe((value) => {
+        sStoreLocation = value;
+    });
 
     const getGeoLocation = () => {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(async (position) => {       
-                const [ lat, lng ] = [ position.coords.latitude, position.coords.longitude ];         
-                
-                confirmLocation(lat, lng);
-            });
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const [lat, lng] = [
+                        position.coords.latitude,
+                        position.coords.longitude,
+                    ];
+                    confirmLocation(lat, lng);
+                    geoErrorMessage = "";
+                },
+                (error) => {
+                    geoErrorMessage =
+                        "Unable to retrieve your location. Please choose the location manually";
+                },
+            );
+        } else {
+            geoErrorMessage = "Geolocation is not supported by this browser.";
         }
-    }
+    };
 
     const handleMap = async () => {
+        geoErrorMessage = "";
         showMap = true;
         await tick();
 
-        map = leaflet.map(mapElem, { zoomControl: true }).setView([27.700001, 85.333336], 13);
-        leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        map = leaflet
+            .map(mapElem, { zoomControl: true })
+            .setView([27.700001, 85.333336], 13);
+        leaflet
+            .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
+            .addTo(map);
 
-        map.on('click', e => {
-            mapCoords = [ e.latlng.lat, e.latlng.lng ];
+        map.on("click", async (e) => {
+            mapCoords = [e.latlng.lat, e.latlng.lng];
 
-            if (marker) marker.setLatLng([mapCoords[0], mapCoords[1]]); 
-            else  marker = leaflet.marker([mapCoords[0], mapCoords[1]]).addTo(map);
+            if (marker) marker.setLatLng([mapCoords[0], mapCoords[1]]);
+            else
+                marker = leaflet
+                    .marker([mapCoords[0], mapCoords[1]])
+                    .addTo(map);
 
             isLocationSelected = true;
+            clickedPlaceName = await getPlaceName(mapCoords[0], mapCoords[1]);
         });
-    }
-
-    const handleConfirmLocation = () => {
-        confirmLocation(mapCoords[0], mapCoords[1])
-    }
+    };
 
     const confirmLocation = async (lat, lng) => {
         sUserLocation.coords = [lat, lng];
         sUserLocation.place = await getPlaceName(lat, lng);
 
-        const [ distance, time ] = await getTravelDetails(storeLatLng, sUserLocation.coords, 10);
+        const [distance, time] = await getTravelDetails(
+            sStoreLocation,
+            sUserLocation.coords,
+            10,
+        );
 
         sUserLocation.distance = distance;
-        sUserLocation.deliveryTime = time;
+        sUserLocation.deliveryTime = sUserLocation.distance < 2 ? time : " - ";
+        sUserLocation.deliveryAvailable = sUserLocation.distance < 2;
+
+        localStorage.setItem("geoCoords", sUserLocation.coords);
 
         userLocation.set(sUserLocation);
     };
 
     onMount(async () => {
         if (browser) {
-            leaflet = await import('leaflet');
+            leaflet = await import("leaflet");
         }
     });
 </script>
@@ -75,19 +104,32 @@
     <button on:click={getGeoLocation}>Get Current Location</button>
     <button on:click={handleMap}>Type Location Manually</button>
 
-    {#if showMap}
-    <div class="map-fullscreen">
-        <div bind:this={mapElem} id="map" class="map-container"></div>
+    {#if geoErrorMessage}
+        <p class="error-message">{geoErrorMessage}</p>
+    {/if}
 
-        {#if isLocationSelected}
-        <button class="confirm-btn" on:click={handleConfirmLocation}>Confirm Location</button>
-        {/if}
-    </div>
+    {#if showMap}
+        <div class="map-container">
+            <div bind:this={mapElem} id="map" class="map"></div>
+            <div class="place-info">
+                {#if clickedPlaceName}
+                    <p class="place-name">Clicked Place: {clickedPlaceName}</p>
+                {/if}
+                {#if isLocationSelected}
+                    <button
+                        class="confirm-btn"
+                        on:click={() =>
+                            confirmLocation(mapCoords[0], mapCoords[1])}
+                        >Confirm Location</button
+                    >
+                {/if}
+            </div>
+        </div>
     {/if}
 </div>
 
 <style>
-    @import 'leaflet/dist/leaflet.css';
+    @import "leaflet/dist/leaflet.css";
 
     .location-popup {
         padding: 1rem;
@@ -111,36 +153,49 @@
         background-color: #0056b3;
     }
 
-    .map-fullscreen {
-        width: 100%;
-        height: 350px;
-        position: relative;
+    .map-container {
+        margin-top: 1rem;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
-        background-color: white;
+        justify-content: center;
     }
 
-    .map-container {
+    .map {
         width: 100%;
-        height: 100%;
+        height: 350px;
+    }
+
+    .place-info {
+        margin: 1rem 0.5rem 0;
+        font-size: 0.9rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .confirm-btn {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
         padding: 0.5rem 2rem;
+        width: max-content;
         background-color: #28a745;
         color: white;
         border: none;
-        cursor: pointer;
         border-radius: 5px;
         z-index: 1000;
+        position: absolute;
+        top: 28rem;
+        left: 50%;
+        right: 50%;
+        transform: translateX(-50%);
     }
 
     .confirm-btn:hover {
         background-color: #218838;
+    }
+
+    .error-message {
+        color: red;
+        margin: 1rem 0;
     }
 </style>
