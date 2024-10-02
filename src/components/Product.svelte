@@ -14,7 +14,7 @@
     cartProducts.subscribe((value) => {
         sCartProducts = value;
         cartProduct = sCartProducts.find(
-            (product) => product.productId === productData.productId,
+            (product) => product.id === productData.id,
         );
         productInCart = cartProduct;
     });
@@ -22,10 +22,9 @@
     const handleAddClick = () => {
         if (
             sCartProducts.some(
-                (product) => product.productId === productData.productId,
+                (product) => product.id === productData.id,
             )
-        )
-            return;
+        ) return;
 
         let newProduct = {
             ...productData,
@@ -38,7 +37,7 @@
 
     const handleCartMinus = () => {
         let i = sCartProducts.findIndex(
-            (product) => product.productId === productData.productId,
+            (product) => product.id === productData.id,
         );
         if (i < 0) return;
 
@@ -53,10 +52,16 @@
     };
 
     const handleCartPlus = () => {
+        console.log(productData.stock)
         let i = sCartProducts.findIndex(
-            (product) => product.productId === productData.productId,
+            (product) => product.id === productData.id,
         );
         if (i < 0) return;
+        if(sCartProducts[i].count >= productData.stock) {
+            sCartProducts[i].count = productData.stock;
+            cartProducts.set([...sCartProducts]);
+            return;
+        }
 
         sCartProducts[i].count++;
         sCartProducts[i].totalPrice =
@@ -69,14 +74,16 @@
 <div class="product">
     <img
         class="product-img"
-        src="https://makanamarket.com/uploads/84154-20230524100518.jpg"
+        src={productData.imageUrl}
         alt=""
     />
     <div class="product-text">
         <div class="product-name">{productData.productName}</div>
         <div class="product-text-below">
-            {#if !productInCart}
-                <div class="product-add-btn" on:click={handleAddClick}>Add</div>
+            {#if !productInCart && productData.stock > 0}
+                <div class="product-add-btn" on:click={handleAddClick}>Add</div> 
+            {:else if productData.stock <= 0}
+                <span class="out-stock-txt">Out of Stock</span>
             {:else}
                 <div class="cart-product-add-minus-btns">
                     <button
@@ -101,54 +108,72 @@
 
 <style>
     .product {
-        padding: 0.5rem;
+        padding: 0.5rem 0.5rem 1rem;
         width: 200px;
-        border: 1px solid #dcdcdc;
+        background-color: #fff;
         border-radius: 3px;
+        box-shadow: 1px 1px 1px rgb(46 128 187 / 20%);
     }
 
     .product-img {
         width: 100%;
+        height: 200px;
+        object-fit: contain;
     }
 
     .product-text {
         margin-top: 1rem;
+        padding: 0 .5rem;
         font-size: 0.9rem;
     }
 
     .product-text-below {
-        margin-top: 1rem;
-        font-size: 0.8rem;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
     .product-add-btn {
-        padding: 0.25rem 1rem;
-        border: 1px solid #dcdcdc;
+        padding: 0.5rem 1rem;
+        color: #fff;
+        background-color: var(--blue);
         border-radius: 3px;
         cursor: pointer;
     }
 
-    .cart-product-add-minus-btns {
-        display: flex;
+    .out-stock-txt{
+        font-style: italic;
+        color: #e74c3c;
     }
 
-    .cart-product-add-minus-btns button,
-    .cart-product-count {
-        width: 25px;
-        height: 25px;
-        outline: none;
-        border: 1px solid #dcdcdc;
+    .cart-product-add-minus-btns {
         display: flex;
-        justify-content: center;
         align-items: center;
     }
 
     .cart-product-count {
-        width: 40px;
-        border-left: none;
-        border-right: none;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .cart-product-minus-btn,
+    .cart-product-plus-btn {
+        padding: 0.5rem;
+        color: #fff;
+        background-color: var(--blue);
+        border: none;
+        border-radius: 5px;
+    }
+
+    .cart-product-minus-btn:hover,
+    .cart-product-plus-btn:hover {
+        color: white;
+        background-color: var(--blue);
+    }
+
+    .product-price {
+        font-style: italic;
+        color: #797979;
     }
 </style>

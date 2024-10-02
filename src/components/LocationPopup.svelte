@@ -113,7 +113,7 @@
             <div bind:this={mapElem} id="map" class="map"></div>
             <div class="place-info">
                 {#if clickedPlaceName}
-                    <p class="place-name">Clicked Place: {clickedPlaceName}</p>
+                    <p class="place-name">{clickedPlaceName}</p>
                 {/if}
                 {#if isLocationSelected}
                     <button
@@ -132,17 +132,27 @@
     @import "leaflet/dist/leaflet.css";
 
     .location-popup {
-        padding: 1rem;
-        width: 370px;
+        padding: 2rem;
+        width: 400px;
         background-color: white;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .location-popup h2{
+        margin-bottom: 1rem;
     }
 
     button {
-        margin: 1rem 0;
+        margin: .25rem 0;
         padding: 0.5rem 1rem;
-        background-color: #007bff;
+        width: 250px;
+        height: 40px;
+        background-color: var(--blue);
         color: white;
         border: none;
         cursor: pointer;
@@ -154,6 +164,7 @@
     }
 
     .map-container {
+        width: 100%;
         margin-top: 1rem;
         display: flex;
         flex-direction: column;
@@ -178,13 +189,13 @@
     .confirm-btn {
         padding: 0.5rem 2rem;
         width: max-content;
-        background-color: #28a745;
+        background-color: var(--green);
         color: white;
         border: none;
         border-radius: 5px;
         z-index: 1000;
         position: absolute;
-        top: 28rem;
+        top: 31rem;
         left: 50%;
         right: 50%;
         transform: translateX(-50%);

@@ -128,7 +128,7 @@
 
 <div class="header">
     <div class="header-left">
-        <h1>OnlineMart</h1>
+        <h1>Chitto<span class="ctwo">Pasal</span></h1>
         {#if sUserLocation.place}
             <div
                 class="header-delivery-location"
@@ -180,25 +180,22 @@
                 <div class="dropdown">
                     {#if phoneNumber}
                         <div class="dropdown-item">
-                            Phone: {phoneNumber}
-                            <button
-                                on:click={() => (showPhoneInputPopup = true)}
-                                >Edit</button
-                            >
+                            <i class="fa-solid fa-phone"></i>
+                            <span class="phoneno">{phoneNumber}</span>
+                            <i class="fa-regular fa-pen-to-square" on:click={() => (showPhoneInputPopup = true)}></i>
                         </div>
                     {:else}
-                        <div class="dropdown-item">
-                            <button
-                                on:click={() => (showPhoneInputPopup = true)}
-                            >
-                                Add Phone Number
-                            </button>
+                        <div class="dropdown-item" on:click={() => (showPhoneInputPopup = true)}>
+                            <i class="fa-solid fa-phone"></i>
+                            Add Phone Number
                         </div>
                     {/if}
                     <div class="dropdown-item" on:click={() => goto("/orders")}>
                         Order history
                     </div>
-                    <div class="dropdown-item" on:click={logOut}>Logout</div>
+                    <div class="dropdown-item" on:click={logOut}>
+                        Logout
+                    </div>
                 </div>
             {/if}
         {/if}
@@ -227,40 +224,49 @@
 
 {#if showPhoneInputPopup}
     <div
-        class="popup-overlay"
-        on:click={() => (showPhoneInputPopup = false)}
+    class="popup-overlay"
+    on:click={() => (showPhoneInputPopup = false)}
     ></div>
     <div class="popup-container">
-        <h3>{phoneNumber ? "Edit Phone Number" : "Add Phone Number"}</h3>
-        <input
+        <div class="add-edit-phone">
+            <h3>{phoneNumber ? "Edit Phone Number" : "Add Phone Number"}</h3>
+            <input
             type="text"
             bind:value={newPhoneNumber}
             placeholder="Enter new phone number"
-        />
-        <button on:click={savePhoneNumber}>Save</button>
+            />
+            <button on:click={savePhoneNumber}>Save</button>
+        </div>
     </div>
 {/if}
 
 <style>
     .header {
         padding: 1rem 2rem;
+        background-color: #fff;
+        border-bottom: 1px solid #dcdcdc;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid #dcdcdc;
     }
 
     .header-left,
     .header-right {
         display: flex;
         align-items: center;
+        gap: 2rem;
     }
 
     .header-left h1 {
-        margin-right: 2rem;
+        font-size: 1.75rem;
+        color: var(--blue);
     }
 
     .header-delivery-location {
+        padding: .5rem;
+        background-color: #ecfbff;
+        border: 1px solid #dcdcdc;
+        border-radius: 3px;
         cursor: pointer;
     }
 
@@ -274,31 +280,31 @@
     }
 
     .header-location-txt {
-        width: 250px;
-        font-size: 0.9rem;
+        margin-right: .25rem;
+        width: auto;
+        max-width: 200px;
+        font-size: 0.8rem;
         color: #797979;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
         overflow: hidden;
-    }
-
-    .header-location i {
-        margin-left: -1rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     .header-search input {
         padding: 0 1rem;
         width: 700px;
         height: 40px;
-        border: 1px solid #dcdcdc;
+        background-color: #eaeaea;
+        border: none;
         border-radius: 3px;
-        outline: none;
     }
 
     .header-login,
     .header-user {
-        margin: 0 2rem;
+        padding: .5rem 1rem;
+        background-color: var(--green);
+        color: #fff;
+        border-radius: 3px;
         cursor: pointer;
     }
 
@@ -311,11 +317,17 @@
         cursor: pointer;
     }
 
+    .header-cart i{
+        font-size: 1.25rem;
+    }
+
     .header-cart span {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--green);
         position: absolute;
-        top: -0.5rem;
-        right: -0.75rem;
+        top: -0.75rem;
+        right: -0.8rem;
     }
 
     .dropdown {
@@ -335,9 +347,8 @@
         border-bottom: 1px solid #f1f1f1;
     }
 
-    .dropdown-item button {
-        margin-left: 1rem;
-        font-size: 0.9rem;
+    .dropdown .phoneno{
+        margin: 0 2rem 0 .5rem;
     }
 
     .dropdown-item:hover {
@@ -359,10 +370,44 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: white;
-        padding: 2rem;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         z-index: 101;
+    }
+
+    .add-edit-phone {
+        padding: 2rem;
+        width: 400px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .add-edit-phone h3 {
+        margin-bottom: .5rem;
+    }
+
+    .add-edit-phone button {
+        margin: .25rem 0;
+        padding: 0.5rem 1rem;
+        width: 250px;
+        height: 40px;
+        background-color: var(--blue);
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .add-edit-phone button:hover {
+        background-color: #0056b3;
+    }
+
+    .fa-phone {
+        margin-right: .5rem;
     }
 
     .popup-container input {

@@ -1,3 +1,7 @@
+:root {
+    --blue: #1a89ce;
+    --green: #5CD00F;
+}
 *{
     padding: 0;
     margin: 0;
@@ -5,8 +9,13 @@
 }
 body{
     font-family: "Poppins", sans-serif;
+    background-color: #fafafa;
 }
 
 button{
+    outline: none;
     cursor: pointer;
+}
+.ctwo{
+    color: var(--green);
 }

@@ -68,45 +68,66 @@
 {#if !closePopup}
     <div class="login-popup">
         {#if !user}
-            <h1>Chhito, Instant Delivery</h1>
+            <h1>Chhito<span>Pasal</span></h1>
             <p>Login with Google or Facebook</p>
             <button on:click={googleSignIn}>Google</button>
+            <button on:click={googleSignIn}>Facebook</button>
         {:else if !phoneConfirmed}
-            <div>
-                <label for="phone">Enter your phone number:</label>
-                <input
-                    type="text"
-                    id="phone"
-                    bind:value={phoneNumber}
-                    placeholder="Enter phone number"
-                />
-                <button on:click={confirmPhoneNumber}>Confirm</button>
-            </div>
+            <label for="phone">Enter your phone number:</label>
+            <input
+                type="text"
+                id="phone"
+                bind:value={phoneNumber}
+                placeholder="Enter phone number"
+            />
+            <button on:click={confirmPhoneNumber}>Confirm</button>
         {/if}
     </div>
 {/if}
 
 <style>
     .login-popup {
-        padding: 1rem 1.5rem;
-        width: 500px;
-        border: 1px solid #797979;
-        text-align: center;
+        padding: 2rem;
+        width: 400px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    
+    .login-popup h1 {
+        color: var(--blue);
+    }
+
+    .login-popup h1 span{
+        color: var(--green);
     }
 
     p {
-        margin: 1rem 0 2rem;
+        margin: 0 0 1rem;
     }
 
     button {
-        margin: 0 0.5rem;
-        width: 175px;
+        margin: .25rem 0;
+        padding: 0.5rem 1rem;
+        width: 250px;
         height: 40px;
-        font-size: 18px;
-        color: #797979;
-        border: 1px solid #797979;
-        border-radius: 3px;
+        background-color: var(--blue);
+        color: white;
+        border: none;
         cursor: pointer;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    label {
+        margin-bottom: .25rem;
     }
 
     input {
@@ -114,6 +135,7 @@
         padding: 0.5rem;
         width: 250px;
         font-size: 16px;
+        background-color: #eaeaea;
         border: 1px solid #ccc;
         border-radius: 3px;
     }

@@ -1,6 +1,7 @@
 <script>
+    import "./../app.css";
     import { initializeApp } from "firebase/app";
-    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "firebase/firestore";
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, getDoc } from "firebase/firestore";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { onMount } from "svelte";
 
@@ -94,6 +95,20 @@
         if (!editingProductId) return;
 
         try {
+            let imageUrl;
+
+            // If a new image is uploaded, upload it to Firebase Storage
+            if (imageFile) {
+                const storageRef = ref(storage, `products/${imageFile.name}`);
+                await uploadBytes(storageRef, imageFile);
+                imageUrl = await getDownloadURL(storageRef);
+            } else {
+                // If no new image is uploaded, retain the existing image URL
+                const productRef = doc(db, "products", editingProductId);
+                const productSnapshot = await getDoc(productRef);
+                imageUrl = productSnapshot.data().imageUrl;
+            }
+
             const productRef = doc(db, "products", editingProductId);
             await updateDoc(productRef, {
                 productName,
@@ -101,6 +116,7 @@
                 discountedPrice: Number(discountedPrice),
                 category,
                 stock: Number(stock),
+                imageUrl, // Update the image URL if a new image is uploaded
             });
 
             uploadStatus = "Product updated successfully!";
@@ -157,22 +173,37 @@
     </div>
 </div>
 
-<!-- Product List -->
+<!-- Product List in Table Form -->
 <div class="product-list">
     <h2>Product List</h2>
-    {#each products as product}
-        <div class="product-item">
-            <img src={product.imageUrl} alt={product.productName} style="width: 100px; height: auto;" />
-            <div>
-                <h3>{product.productName}</h3>
-                <p>Price: ${product.price}</p>
-                <p>Discounted Price: ${product.discountedPrice}</p>
-                <p>Category: {product.category}</p>
-                <p>Stock: {product.stock}</p>
-                <button on:click={() => editProduct(product)}>Edit</button>
-            </div>
-        </div>
-    {/each}
+    <table>
+        <thead>
+            <tr>
+                <th>Product Image</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Discounted Price</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each products as product}
+                <tr>
+                    <td><img src={product.imageUrl} alt={product.productName} style="width: 60px; height: auto;" /></td>
+                    <td>{product.productName}</td>
+                    <td>Rs. {product.price}</td>
+                    <td>Rs. {product.discountedPrice}</td>
+                    <td>{product.category}</td>
+                    <td>{product.stock}</td>
+                    <td>
+                        <button on:click={() => editProduct(product)}>Edit</button>
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
 </div>
 
 <style>
@@ -253,51 +284,49 @@
     }
 
     .product-list {
-        max-width: 600px;
+        max-width: 1000px;
         margin: 2rem auto;
-        padding: 1rem;
-        background-color: #f7f7f7;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1rem;
         font-family: 'Roboto', sans-serif;
-        color: #333;
     }
 
-    .product-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1.5rem;
+    th, td {
+        padding: 0.75rem 1rem;
+        text-align: left;
         border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 1rem;
-        background-color: #fff;
     }
 
-    .product-item img {
-        border-radius: 8px;
-        margin-right: 1rem;
+    th {
+        background-color: #2980b9;
+        color: white;
     }
 
-    h2 {
-        text-align: center;
-        color: #2c3e50;
-        margin-bottom: 1.5rem;
-        font-size: 1.5rem;
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
     }
 
-    button {
-        margin-top: 0.5rem;
-        padding: 0.5rem 1rem;
+    td img {
+        display: block;
+        margin: 0 auto;
+    }
+
+    td button {
         background-color: #3498db;
         color: #fff;
-        border: none;
+        padding: 0.5rem 1rem;
         border-radius: 4px;
+        border: none;
         cursor: pointer;
-        font-size: 0.9rem;
-        transition: background-color 0.3s;
     }
 
-    button:hover {
+    td button:hover {
         background-color: #2980b9;
     }
 </style>

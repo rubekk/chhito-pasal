@@ -3,7 +3,7 @@
     import { db } from "$lib/firebaseConfig";
     import { collection, addDoc } from "firebase/firestore";
     import { authStore, userLocation } from "$lib/store";
-    import { doc, getDoc } from "firebase/firestore";
+    import { doc, getDoc, updateDoc } from "firebase/firestore";
 
     let sAuthStore = {
         loggedIn: false,
@@ -35,7 +35,7 @@
     };
 
     const handleCartMinus = (id) => {
-        let i = sCartProducts.findIndex((product) => product.productId == id);
+        let i = sCartProducts.findIndex((product) => product.id == id);
         if (i < 0) return;
         if (sCartProducts[i].count > 0) sCartProducts[i].count--;
         if (sCartProducts[i].count == 0) sCartProducts.splice(i, 1);
@@ -45,8 +45,8 @@
     };
 
     const handleCartPlus = (id) => {
-        let i = sCartProducts.findIndex((product) => product.productId == id);
-        if (i < 0) return;
+        let i = sCartProducts.findIndex((product) => product.id == id);
+        if (i < 0 || sCartProducts[i].count >= sCartProducts[i].stock) return;
         sCartProducts[i].count++;
         sCartProducts = [...sCartProducts];
         cartProducts.set(sCartProducts);
@@ -54,7 +54,7 @@
     };
 
     const handleSingleProductPrice = (id) => {
-        let i = sCartProducts.findIndex((product) => product.productId == id);
+        let i = sCartProducts.findIndex((product) => product.id == id);
         if (i < 0) return;
         sCartProducts[i].totalPrice =
             sCartProducts[i].count * sCartProducts[i].price;
@@ -69,6 +69,8 @@
     };
 
     const confirmOrder = async () => {
+        if (!sAuthStore.loggedIn) return;
+
         const orderTime = new Date().toLocaleTimeString();
         const orderDate = new Date().toLocaleDateString();
         const orderDay = new Date().toLocaleDateString("en-US", {
@@ -84,7 +86,47 @@
             phoneNumber = null;
         }
 
-        // Construct the order object with nested products
+        // Fetch the current stock for each product
+        const stockPromises = sCartProducts.map((product) =>
+            getDoc(doc(db, "products", product.id)),
+        );
+
+        const stockDocs = await Promise.all(stockPromises);
+
+        // Adjust quantities based on available stock
+        let insufficientStockMessage = "";
+        let isStockAvailable = true;
+
+        stockDocs.forEach((doc, index) => {
+            if (doc.exists()) {
+                const productData = doc.data();
+                const availableStock = productData.stock;
+
+                if (sCartProducts[index].count > availableStock) {
+                    insufficientStockMessage += `Due to high demand,  ${sCartProducts[index].count} ${sCartProducts[index].productName} are not available. However, ${availableStock} remains.`;
+                    sCartProducts[index].count = availableStock; 
+                    isStockAvailable = false;
+                }
+            }
+        });
+
+        if (!isStockAvailable) {
+            alert(insufficientStockMessage.trim()); // or use a more user-friendly notification method
+            cartProducts.set(sCartProducts); // Update the cart state after adjusting quantities
+
+            return;
+        }
+
+        if (
+            stockDocs.some(
+                (doc, index) =>
+                    doc.exists() &&
+                    sCartProducts[index].count > doc.data().stock,
+            )
+        ) {
+            return;
+        }
+
         const orderData = {
             orderDate,
             orderTime,
@@ -105,8 +147,21 @@
         };
 
         try {
-            await addDoc(collection(db, "orders"), orderData);
+            // Add the order to Firestore
+            const orderRef = await addDoc(collection(db, "orders"), orderData);
 
+            // Update the stock for each ordered product
+            await Promise.all(
+                sCartProducts.map(async (product) => {
+                    const productRef = doc(db, "products", product.id);
+                    const newStock = product.stock - product.count;
+
+                    // Update the product stock in the database
+                    await updateDoc(productRef, { stock: newStock });
+                }),
+            );
+
+            // Clear the cart and close it
             cartProducts.set([]);
             closeCart();
         } catch (error) {
@@ -130,44 +185,47 @@
             The cart is empty, add products to the cart.
         </div>
     {:else}
-        {#each sCartProducts as cartProduct}
-            <div class="cart-product">
-                <img
-                    class="cart-product-img"
-                    src="https://makanamarket.com/uploads/84154-20230524100518.jpg"
-                    alt=""
-                />
-                <div class="cart-product-details">
-                    <div class="cart-product-name">
-                        {cartProduct.productName}
-                    </div>
-                    <div class="cart-product-info">
-                        <div class="cart-product-price">
-                            Rs. {cartProduct.price} x {cartProduct.count} = Rs. {cartProduct.totalPrice}
+        <div class="cart-products-list">
+            {#each sCartProducts as cartProduct}
+                <div class="cart-product">
+                    <img
+                        class="cart-product-img"
+                        src={cartProduct.imageUrl}
+                        alt=""
+                    />
+                    <div class="cart-product-details">
+                        <div class="cart-product-name">
+                            {cartProduct.productName}
                         </div>
-                        <div class="cart-product-controls">
-                            <button
-                                class="cart-product-minus-btn"
-                                on:click={() =>
-                                    handleCartMinus(cartProduct.productId)}
-                            >
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <div class="cart-product-count">
-                                {cartProduct.count}
+                        <div class="cart-product-info">
+                            <div class="cart-product-price">
+                                Rs. {cartProduct.price} x {cartProduct.count} = Rs.
+                                {cartProduct.totalPrice}
                             </div>
-                            <button
-                                class="cart-product-plus-btn"
-                                on:click={() =>
-                                    handleCartPlus(cartProduct.productId)}
-                            >
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
+                            <div class="cart-product-controls">
+                                <button
+                                    class="cart-product-minus-btn"
+                                    on:click={() =>
+                                        handleCartMinus(cartProduct.id)}
+                                >
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <div class="cart-product-count">
+                                    {cartProduct.count}
+                                </div>
+                                <button
+                                    class="cart-product-plus-btn"
+                                    on:click={() =>
+                                        handleCartPlus(cartProduct.id)}
+                                >
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        {/each}
+            {/each}
+        </div>
 
         <div class="cart-summary">
             <div>Total Price: <span>Rs. {totalPrice}</span></div>
@@ -190,7 +248,7 @@
 
 <style>
     .cart-products-container {
-        padding: 2rem;
+        padding: 2rem 2rem 1rem;
         width: 350px;
         height: 100vh;
         background-color: #fff;
@@ -224,9 +282,10 @@
         cursor: pointer;
     }
 
-    .cart-products {
-        overflow-y: auto;
+    .cart-products-list {
         flex-grow: 1;
+        overflow-y: auto; /* Enables scrolling */
+        margin-bottom: 1rem; /* Space for the summary section */
     }
 
     .cart-product {
@@ -282,12 +341,19 @@
         font-size: 0.9rem;
     }
 
+    .cart-product-minus-btn:hover,
+    .cart-product-plus-btn:hover {
+        background-color: var(--blue);
+        color: white;
+    }
+
     .cart-summary {
         padding: 1rem;
+        margin-top: 1rem;
         background-color: #fafafa;
+        border: 1px solid #dcdcdc;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        margin-top: 2rem;
     }
 
     .cart-summary div {
@@ -300,34 +366,31 @@
     .total-amount {
         font-weight: bold;
         font-size: 1.2rem;
-        color: #e74c3c;
-    }
-
-    .cart-product-minus-btn:hover,
-    .cart-product-plus-btn:hover {
-        background-color: #e74c3c;
-        color: white;
+        color: var(--green);
     }
 
     .confirm-order-btn {
+        margin-top: 1rem;
         width: 100%;
         padding: 0.75rem;
-        background-color: #2c3e50;
+        background-color: var(--blue);
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         font-size: 1rem;
-        margin-top: 1rem;
     }
 
-    .confirm-order-btn:hover {
-        background-color: #1a252f;
+    .empty-cart-message {
+        text-align: center;
+        color: #999;
+        margin-top: 2rem;
     }
 
     .login-prompt {
         color: #e74c3c;
         font-weight: bold;
+        text-align: center;
         margin-top: 1rem;
     }
 </style>

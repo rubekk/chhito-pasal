@@ -1,24 +1,20 @@
 <script>
     import "./../app.css";
-    import Header from "./../../components/Header.svelte";
     import Product from "./../../components/Product.svelte";
     import { productsData } from "$lib/store";
     import { goto } from '$app/navigation';
-    import { page } from "$app/stores"; // For accessing the URL parameters
+    import { page } from "$app/stores"; 
 
     let sProductsData = [];
     let searchQuery = "";
     let filteredProducts = [];
 
-    // Subscribe to the products data
     productsData.subscribe(value => {
         sProductsData = value;
     });
 
-    // Subscribe to the URL to get the search query
     $: searchQuery = $page.url.searchParams.get("query");
 
-    // Perform a flexible search
     $: filteredProducts = sProductsData.filter(product => {
         return product.productName.toLowerCase().includes(searchQuery?.toLowerCase() || "");
     });
@@ -27,8 +23,6 @@
         goto('/'); 
     };
 </script>
-
-<Header />
 
 <div class="search-info">
     <button on:click={goBack} class="back-button">Back</button>
