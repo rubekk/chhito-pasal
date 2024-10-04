@@ -80,12 +80,12 @@
         const [distance, time] = await getTravelDetails(
             sStoreLocation,
             sUserLocation.coords,
-            10,
+            8,
         );
 
         sUserLocation.distance = distance;
-        sUserLocation.deliveryTime = sUserLocation.distance < 2 ? time : " - ";
-        sUserLocation.deliveryAvailable = sUserLocation.distance < 2;
+        sUserLocation.deliveryTime = sUserLocation.distance < 1.5 ? time : " - ";
+        sUserLocation.deliveryAvailable = sUserLocation.distance < 1.5;
 
         localStorage.setItem("geoCoords", sUserLocation.coords);
 

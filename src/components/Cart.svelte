@@ -19,6 +19,8 @@
     let sCartProducts = [];
     let totalPrice = 0;
     let deliveryCharge = 0;
+    let phoneInput = ""; 
+    let phoneNumber = null;
 
     authStore.subscribe((value) => {
         sAuthStore = value;
@@ -69,22 +71,16 @@
     };
 
     const confirmOrder = async () => {
-        if (!sAuthStore.loggedIn) return;
+        if (!sAuthStore.loggedIn || !phoneInput) {
+            alert("Please log in and provide a phone number to confirm the order.");
+            return;
+        }
 
         const orderTime = new Date().toLocaleTimeString();
         const orderDate = new Date().toLocaleDateString();
         const orderDay = new Date().toLocaleDateString("en-US", {
             weekday: "long",
         });
-
-        let phoneNumber = null;
-
-        const userDoc = await getDoc(doc(db, "users", sAuthStore.user.uid));
-        if (userDoc.exists() && userDoc.data().phoneNumber) {
-            phoneNumber = userDoc.data().phoneNumber;
-        } else {
-            phoneNumber = null;
-        }
 
         // Fetch the current stock for each product
         const stockPromises = sCartProducts.map((product) =>
@@ -93,7 +89,6 @@
 
         const stockDocs = await Promise.all(stockPromises);
 
-        // Adjust quantities based on available stock
         let insufficientStockMessage = "";
         let isStockAvailable = true;
 
@@ -103,27 +98,16 @@
                 const availableStock = productData.stock;
 
                 if (sCartProducts[index].count > availableStock) {
-                    insufficientStockMessage += `Due to high demand,  ${sCartProducts[index].count} ${sCartProducts[index].productName} are not available. However, ${availableStock} remains.`;
-                    sCartProducts[index].count = availableStock; 
+                    insufficientStockMessage += `Due to high demand, ${sCartProducts[index].count} ${sCartProducts[index].productName} are not available. However, ${availableStock} remains.`;
+                    sCartProducts[index].count = availableStock;
                     isStockAvailable = false;
                 }
             }
         });
 
         if (!isStockAvailable) {
-            alert(insufficientStockMessage.trim()); // or use a more user-friendly notification method
-            cartProducts.set(sCartProducts); // Update the cart state after adjusting quantities
-
-            return;
-        }
-
-        if (
-            stockDocs.some(
-                (doc, index) =>
-                    doc.exists() &&
-                    sCartProducts[index].count > doc.data().stock,
-            )
-        ) {
+            alert(insufficientStockMessage.trim());
+            cartProducts.set(sCartProducts);
             return;
         }
 
@@ -137,31 +121,27 @@
             orderDeliveryTime: sUserLocation.deliveryTime + "mins",
             orderUserId: sAuthStore.user.uid,
             orderUsername: sAuthStore.user.displayName,
-            orderPhoneNumber: phoneNumber,
+            orderPhoneNumber: phoneInput, // Use the phoneInput value
             orderEmail: sAuthStore.user.email,
             orderProducts: sCartProducts.map((product) => ({
                 productName: product.productName,
                 price: product.price,
                 quantity: product.count,
             })),
+            status: "pending",
         };
 
         try {
-            // Add the order to Firestore
             const orderRef = await addDoc(collection(db, "orders"), orderData);
 
-            // Update the stock for each ordered product
             await Promise.all(
                 sCartProducts.map(async (product) => {
                     const productRef = doc(db, "products", product.id);
                     const newStock = product.stock - product.count;
-
-                    // Update the product stock in the database
                     await updateDoc(productRef, { stock: newStock });
                 }),
             );
 
-            // Clear the cart and close it
             cartProducts.set([]);
             closeCart();
         } catch (error) {
@@ -170,6 +150,16 @@
     };
 
     $: if (sCartProducts) handleTotalPrice();
+
+    // Fetch phone number from the user document if logged in
+    if (sAuthStore.loggedIn) {
+        getDoc(doc(db, "users", sAuthStore.user.uid)).then((userDoc) => {
+            if (userDoc.exists() && userDoc.data().phoneNumber) {
+                phoneNumber = userDoc.data().phoneNumber;
+                phoneInput = phoneNumber; // Prefill the phone number input
+            }
+        });
+    }
 </script>
 
 <div class="cart-products-container">
@@ -233,10 +223,21 @@
             <div class="total-amount">
                 Total Amount: <span>Rs. {totalPrice + deliveryCharge}</span>
             </div>
+    
+            <!-- Phone number input field -->
             {#if sAuthStore.loggedIn}
-                <button class="confirm-order-btn" on:click={confirmOrder}
-                    >Confirm Order</button
-                >
+                <div class="phone-input-section">
+                    <label for="phone">Phone:</label>
+                    <input
+                        type="text"
+                        id="phone"
+                        bind:value={phoneInput}
+                        placeholder="Enter your phone number"
+                    />
+                </div>
+                <button class="confirm-order-btn" on:click={confirmOrder}>
+                    Confirm Order
+                </button>
             {:else}
                 <div class="login-prompt">
                     You need to log in to confirm your order.
@@ -391,6 +392,28 @@
         color: #e74c3c;
         font-weight: bold;
         text-align: center;
+        margin-top: 1rem;
+    }
+
+    .phone-input-section {
+        display: flex;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 1rem;
+    }
+
+    .phone-input-section label {
+        margin-right: 1rem;
+    }
+
+    .phone-input-section input {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .login-prompt {
+        color: red;
         margin-top: 1rem;
     }
 </style>

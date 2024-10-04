@@ -1,5 +1,6 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
+    import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
     import { auth, db } from "$lib/firebaseConfig";
     import { onAuthStateChanged } from "firebase/auth";
@@ -62,24 +63,27 @@
     };
 
     const savePhoneNumber = async () => {
-        if (newPhoneNumber.trim()) {
-            try {
-                await setDoc(
-                    doc(db, "users", sAuthStore.user.uid),
-                    {
-                        phoneNumber: newPhoneNumber,
-                    },
-                    { merge: true },
-                );
-                phoneNumber = newPhoneNumber;
-                showPhoneInputPopup = false;
-                newPhoneNumber = "";
-                console.log("Phone number saved successfully.");
-            } catch (error) {
-                console.error("Error saving phone number:", error);
-            }
+    if (newPhoneNumber.trim()) {
+        try {
+            await setDoc(
+                doc(db, "users", sAuthStore.user.uid),
+                {
+                    phoneNumber: newPhoneNumber,
+                    email: sAuthStore.user.email,  
+                    uid: sAuthStore.user.uid,      
+                },
+                { merge: true },
+            );
+            phoneNumber = newPhoneNumber;
+            showPhoneInputPopup = false;
+            newPhoneNumber = "";
+            console.log("Phone number saved successfully along with email and UID.");
+        } catch (error) {
+            console.error("Error saving phone number:", error);
         }
-    };
+    }
+};
+
 
     const handleKeydown = (event) => {
         if (event.key === "Enter" && searchQuery.trim() !== "") {
@@ -92,7 +96,18 @@
         showDropdown = false;
     };
 
+    const handleOutsideClick = (event) => {
+        const dropdown = document.querySelector(".dropdown");
+        const userButton = document.querySelector(".header-user");
+
+        if (showDropdown && dropdown && !dropdown.contains(event.target) && !userButton.contains(event.target)) {
+            showDropdown = false;
+        }
+    };
+
     onMount(async () => {
+        if(browser) window.addEventListener("click", handleOutsideClick);
+
         if (localStorage.getItem("geoCoords")) {
             let coords = localStorage.getItem("geoCoords").split(",");
 
@@ -124,11 +139,18 @@
             }
         });
     });
+
+    onDestroy(() => {
+        if(browser) window.removeEventListener("click", handleOutsideClick);
+    });
 </script>
 
+<div class="mobile-title">
+    <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
+</div>
 <div class="header">
     <div class="header-left">
-        <h1>Chitto<span class="ctwo">Pasal</span></h1>
+        <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
         {#if sUserLocation.place}
             <div
                 class="header-delivery-location"
@@ -241,6 +263,12 @@
 {/if}
 
 <style>
+    .mobile-title {
+        padding: 1rem 1rem 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
     .header {
         padding: 1rem 2rem;
         background-color: #fff;
@@ -257,13 +285,18 @@
         gap: 2rem;
     }
 
-    .header-left h1 {
+    .mobile-title h1, .header-left h1 {
         font-size: 1.75rem;
         color: var(--blue);
     }
 
+    .mobile-title h1 span, .header-left h1 span {
+        color: var(--green);
+    }
+
     .header-delivery-location {
         padding: .5rem;
+        font-weight: bold;
         background-color: #ecfbff;
         border: 1px solid #dcdcdc;
         border-radius: 3px;
@@ -273,10 +306,6 @@
     .header-location {
         display: flex;
         align-items: center;
-    }
-
-    .bold-delivery-location {
-        font-weight: bold;
     }
 
     .header-location-txt {
@@ -416,5 +445,85 @@
         padding: 0.75rem;
         border: 1px solid #dcdcdc;
         border-radius: 4px;
+    }
+
+    /* media queries */
+    @media(max-width: 1400px) {
+        .header {
+            padding: 1rem;
+        }
+    }
+    @media(max-width: 1375px) {
+        .header-search input {
+            width: 500px;
+        }
+    }
+    @media(max-width: 1200px) {
+        .header-left,
+        .header-right {
+            gap: 1rem;
+        }
+    }
+    @media(max-width: 1160px) {
+        .header-search input {
+            width: 400px;
+        }
+    }
+    @media(max-width: 1050px) {
+        .mobile-title {
+            display: flex;
+        }
+        .header-left h1 {
+            display: none;
+        }
+        .header-cart {
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            border: 1px solid #797979;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+        }
+        .header-cart span {
+            top: 7px;
+            right: 9px;
+        }
+    }
+    @media(max-width: 825px) {
+        .header {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            grid-template-rows: auto; 
+            grid-template-areas:
+                "item1 item3"
+                "item2 item2"; 
+            gap: 1rem; 
+        }
+        .header-left {
+            grid-area: item1;
+        }
+        .header-mid {
+            grid-area: item2;
+        }
+        .header-right {
+            grid-area: item3;
+            display: flex;
+            justify-content: end;
+        }
+        .header-search input { 
+            width: 100%;
+        }
+    }
+    @media(max-width: 450px) {
+        .header-location-txt {
+            max-width: 175px;
+            font-size: 0.7rem;
+        }
     }
 </style>

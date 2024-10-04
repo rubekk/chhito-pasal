@@ -24,18 +24,18 @@
         width: 150px;
         height: 150px;
         color: #fff;
-        background: linear-gradient(135deg, var(--green) 30%, #4CAF50 90%); /* Gradient background */
-        border-radius: 12px; /* Soft corners */
+        background: linear-gradient(135deg, var(--green) 30%, #4CAF50 90%); 
+        border-radius: 12px; 
         font-weight: bold;
         text-align: center;
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column; /* Stack text and icon */
-        position: relative; /* For pseudo-element */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow for better depth */
+        flex-direction: column; 
+        position: relative; 
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
         cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; 
     }
 
     .category-content {
@@ -45,14 +45,26 @@
     }
 
     .category h3 {
-        margin: 0; /* Remove default margin */
-        font-size: 1.1rem; /* Slightly larger font for category name */
-        color: #fff; /* Ensure text is white */
+        margin: 0; 
+        font-size: 1.1rem; 
+        color: #fff; 
     }
 
     .fa-arrow-right {
-        margin-top: 0.5rem; /* Space between title and icon */
-        color: #fff; /* Icon color */
-        font-size: 1.5rem; /* Icon size */
+        margin-top: 0.5rem; 
+        color: #fff; 
+        font-size: 1.5rem; 
+    }
+
+    /* media queries */
+    @media(max-width: 700px) {
+       .category {
+            width: 140px;
+            height: 140px;
+       }
+
+       .category h3 {
+            font-size: 1rem; 
+        }
     }
 </style>

@@ -3,39 +3,17 @@
     import { onMount } from "svelte";
     import Product from "../components/Product.svelte";
     import Category from "../components/Category.svelte";
-    import Cart from "../components/Cart.svelte";
-    import LocationPopup from "../components/LocationPopup.svelte";
-    import {
-        authStore,
-        productsData,
-        categories,
-        showCart,
-        userLocation,
-    } from "$lib/store";
-    import { auth, db } from "$lib/firebaseConfig";
-    import { onAuthStateChanged } from "firebase/auth";
+    import { productsData, categories } from "$lib/store";
+    import { db } from "$lib/firebaseConfig";
     import { collection, getDocs, onSnapshot } from "firebase/firestore";
 
-    let sAuthStore = {
-        loggedIn: false,
-        user: null,
-    };
     let sProductsData = [];
-    let sShowLocationPopup = false;
-    let sShowCart = false;
-    let deliveryAvailable = true;
+    let productsContainer;
+    let showLeftButton = false;
+    let showRightButton = false;
 
-    authStore.subscribe((value) => {
-        sAuthStore = value;
-    });
     productsData.subscribe((value) => {
         sProductsData = value;
-    });
-    showCart.subscribe((value) => {
-        sShowCart = value;
-    });
-    userLocation.subscribe((value) => {
-        deliveryAvailable = value.deliveryAvailable;
     });
 
     const getAllProducts = async () => {
@@ -80,66 +58,130 @@
     };
 
     onMount(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                sAuthStore.loggedIn = true;
-                sAuthStore.user = currentUser;
-            } else {
-                sAuthStore.loggedIn = false;
-                sAuthStore.user = null;
-            }
-        });
-
         getAllProducts();
         listenToProductChanges();
+        checkScrollButtons();
     });
+
+    const checkScrollButtons = () => {
+        if (productsContainer) {
+            showLeftButton = productsContainer.scrollLeft > 0;
+            showRightButton = productsContainer.scrollLeft < productsContainer.scrollWidth - productsContainer.clientWidth;
+        }
+    };
+
+    const scrollLeft = () => {
+        if (productsContainer) {
+            productsContainer.scrollBy({ left: -200, behavior: 'smooth' });
+            checkScrollButtons(); // Update button visibility after scrolling
+        }
+    };
+
+    const scrollRight = () => {
+        if (productsContainer) {
+            productsContainer.scrollBy({ left: 200, behavior: 'smooth' });
+            checkScrollButtons(); // Update button visibility after scrolling
+        }
+    };
 </script>
 
-{#if deliveryAvailable}
-    <div class="products-container">
+<div class="products-wrapper">
+    <h3>Featured Products</h3>
+    <div class="products-container" bind:this={productsContainer} on:scroll={checkScrollButtons}>
         {#each sProductsData as productData}
             <Product {productData} />
         {/each}
     </div>
+    {#if showLeftButton}
+        <button class="scroll-button scroll-left" on:click={scrollLeft}>
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+    {/if}
+    {#if showRightButton}
+        <button class="scroll-button scroll-right" on:click={scrollRight}>
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    {/if}
+</div>
+
+<div class="categories-wrapper">
+    <h3>Categories</h3>
     <div class="categories-container">
         {#each categories as category}
-            <Category {category} />
+        <Category {category} />
         {/each}
     </div>
-{:else}
-    Sorry, we are not available at your location yet!
-{/if}
-{#if sShowLocationPopup}
-    <div class="location-popup-container">
-        <LocationPopup />
-    </div>
-{/if}
-{#if sShowCart && deliveryAvailable}
-    <div class="cart-container">
-        <Cart />
-    </div>
-{/if}
+</div>
 
 <style>
-    .products-container,
-    .categories-container {
+    .products-wrapper {
         padding: 2rem 0;
+        width: 100%;
+        position: relative; 
+    }
+
+    .products-wrapper h3, .categories-wrapper h3 {
+        margin: 0 0 1rem .5rem;
+    }
+
+    .products-container, .categories-container {
         margin: auto;
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 0.75rem;
+        overflow-x: auto; 
+        overflow-y: hidden;
+        scrollbar-width: none; 
     }
-    .location-popup-container {
-        position: absolute;
-        top: 5rem;
-        left: 10rem;
-        z-index: 2;
+
+    .categories-wrapper {
+        padding: 2rem 0;
     }
-    .cart-container {
-        position: fixed;
-        top: 0;
-        right: 0;
+
+    .categories-container {
+        flex-wrap: wrap;
+    }
+
+    .scroll-button {
+        height: 40px;
+        width: 40px;
+        color: #000; 
+        background-color: #fff; 
+        border: 1px solid #eaeaea;
+        border-radius: 50%;
+        position: absolute; 
+        top: 50%; 
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 1; 
+    }
+
+    .scroll-left {
+        left: 5px;
+    }
+
+    .scroll-right {
+        right: 5px; 
+    }
+
+    .products-container::-webkit-scrollbar {
+        display: none; 
+    }
+
+    /* media queries */
+    @media(max-width: 800px) {
+        .products-wrapper, .categories-wrapper {
+            padding: 2rem 1rem;
+        }
+        .categories-container {
+            justify-content: center;
+        }
+    }
+    @media(max-width: 700px) {
+        .products-container, .categories-container {
+            gap: .5rem;
+        }
     }
 </style>

@@ -18,52 +18,91 @@
     $: filteredProducts = sProductsData.filter(product => {
         return product.productName.toLowerCase().includes(searchQuery?.toLowerCase() || "");
     });
-
-    const goBack = () => {
-        goto('/'); 
-    };
 </script>
 
-<div class="search-info">
-    <button on:click={goBack} class="back-button">Back</button>
-    <h2>Showing results for "{searchQuery}"</h2>
-</div>
+<div class="search-container">
+    <div class="search-info">
+        <button on:click={() => goto(`/`)} class="back-button">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <h3 class="search-title">Showing results for "{searchQuery}"</h3>
+    </div>
 
-<div class="products-container">
-    {#each filteredProducts as productData}
-    <Product productData={productData} />
-    {/each}
-</div>
+    <div class="products-container">
+        {#each filteredProducts as productData}
+            <Product productData={productData} />
+        {/each}
+    </div>
 
-{#if filteredProducts.length === 0}
-    <p>No results found for "{searchQuery}".</p>
-{/if}
+    {#if filteredProducts.length === 0}
+        <p class="no-results">No results found for "{searchQuery}".</p>
+    {/if}
+</div>
 
 <style>
+    .search-container {
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #cecece;
+        border-top: none;
+    }
+
     .search-info {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        margin: 2rem 0;
+        padding: 1rem;
+        border-bottom: 2px solid var(--blue);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
     }
+
     .back-button {
-        padding: 0.5rem 1rem;
-        background-color: #007bff;
-        color: white;
+        font-size: 1.25rem;
+        background-color: transparent;
         border: none;
-        border-radius: 5px;
+        color: var(--blue);
         cursor: pointer;
+        display: flex;
+        align-items: center;
     }
-    .back-button:hover {
-        background-color: #0056b3;
+
+    .back-button i {
+        margin-right: 0.5rem;
     }
+
+    .search-title {
+        font-size: 1.25rem;
+        color: var(--blue);
+        margin-left: 1rem;
+    }
+
     .products-container {
         padding: 2rem 1rem;
         margin: auto;
-        max-width: 1000px;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 1rem;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .no-results {
+        text-align: center;
+        color: #ff0000;
+        font-weight: bold;
+        margin-top: 2rem;
+    }
+
+    /* media queries */
+    @media(max-width: 700px) {
+        .search-title {
+            font-size: 1.1rem;
+        }
+    }
+    @media(max-width: 450px) {
+        .products-container {
+            padding: 2rem .5rem;
+            margin: auto;
+            width: max-content;
+        }
     }
 </style>
