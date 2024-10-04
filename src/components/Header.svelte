@@ -302,7 +302,7 @@
         font-weight: bold;
         background-color: #ecfbff;
         border: 1px solid #dcdcdc;
-        border-radius: 3px;
+        border-radius: 7px;
         cursor: pointer;
     }
 
@@ -336,7 +336,7 @@
         padding: .5rem 1rem;
         background-color: var(--green);
         color: #fff;
-        border-radius: 3px;
+        border-radius: 7px;
         cursor: pointer;
     }
 
@@ -539,6 +539,10 @@
         }
         .header-search input { 
             width: 100%;
+        }
+        .dropdown {
+            top: 118px;
+            right: 15px;
         }
     }
     @media(max-width: 450px) {

@@ -285,8 +285,8 @@
 
     .cart-products-list {
         flex-grow: 1;
-        overflow-y: auto; /* Enables scrolling */
-        margin-bottom: 1rem; /* Space for the summary section */
+        overflow-y: auto; 
+        margin-bottom: 1rem; 
     }
 
     .cart-product {
