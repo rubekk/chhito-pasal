@@ -1,9 +1,12 @@
 <script>
     import "./../app.css";
     import Product from "./../../components/Product.svelte";
+    import { onMount } from "svelte";
     import { productsData } from "$lib/store";
     import { goto } from '$app/navigation';
     import { page } from "$app/stores"; 
+    import { db } from "$lib/firebaseConfig";
+    import { collection, getDocs, onSnapshot } from "firebase/firestore";
 
     let sProductsData = [];
     let searchQuery = "";
@@ -11,6 +14,53 @@
 
     productsData.subscribe(value => {
         sProductsData = value;
+    });
+
+    const getAllProducts = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "products"));
+            sProductsData = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            productsData.set(sProductsData);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    };
+
+    const listenToProductChanges = () => {
+        const productsRef = collection(db, "products");
+
+        onSnapshot(productsRef, (querySnapshot) => {
+            querySnapshot.docChanges().forEach((change) => {
+                const updatedData = change.doc.data();
+
+                if (change.type === "modified") {
+                    const index = sProductsData.findIndex(
+                        (product) => product.id === change.doc.id,
+                    );
+
+                    if (index !== -1) {
+                        sProductsData[index] = {
+                            ...sProductsData[index],
+                            stock: updatedData.stock,
+                            price: updatedData.price,
+                            discountedPrice: updatedData.discountedPrice,
+                        };
+
+                        productsData.set([...sProductsData]);
+                    }
+                }
+            });
+        });
+    };
+
+    onMount(() => {
+        if(sProductsData.length > 0) return;
+        getAllProducts();
+        listenToProductChanges();
     });
 
     $: searchQuery = $page.url.searchParams.get("query");
@@ -86,10 +136,10 @@
     }
 
     .no-results {
+        margin: 2rem 0;
         text-align: center;
         color: #ff0000;
         font-weight: bold;
-        margin-top: 2rem;
     }
 
     /* media queries */

@@ -135,7 +135,7 @@
 <style>
     .product {
         position: relative;
-        padding: 0.5rem 0.5rem 1rem;
+        padding: 0.5rem 0.5rem;
         width: 200px;
         min-width: 200px;
         background-color: #fff;
@@ -160,8 +160,10 @@
     }
 
     .product-img {
-        width: 100%;
-        height: 200px;
+        margin: auto;
+        width: 75%;
+        height: 175px;
+        display: flex;
         object-fit: contain;
     }
 
@@ -172,7 +174,8 @@
     }
 
     .product-name {
-        height: 42px;
+        height: 45px;
+        font-weight: 500;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -180,7 +183,6 @@
     }
 
     .product-text-below {
-        margin-top: 1.5rem;
         font-size: 0.9rem;
         display: flex;
         justify-content: space-between;
@@ -191,6 +193,7 @@
         padding: 0.5rem 1rem;
         color: #fff;
         background-color: var(--blue);
+        border: 1px solid var(--blue);
         border-radius: 3px;
         cursor: pointer;
     }

@@ -43,7 +43,9 @@
     });
 </script>
 
-<Header />
+<div class="header-layout">
+    <Header />
+</div>
 {#if deliveryAvailable}
     <div class="slot-container">
         <slot />
@@ -90,4 +92,9 @@
             padding: 0;
        } 
     }
+    /* @media(max-width: 700px) {
+       .header-layout {
+        display: none;
+       }
+    } */
 </style>

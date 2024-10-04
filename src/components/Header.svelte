@@ -146,11 +146,11 @@
 </script>
 
 <div class="mobile-title">
-    <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
+    <h1 on:click={() => goto(`/`)}>Chhito<span>Pasal</span></h1>
 </div>
 <div class="header">
     <div class="header-left">
-        <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
+        <h1 on:click={() => goto(`/`)}>Chhito<span>Pasal</span></h1>
         {#if sUserLocation.place}
             <div
                 class="header-delivery-location"
@@ -264,7 +264,7 @@
 
 <style>
     .mobile-title {
-        padding: 1rem 1rem 0;
+        padding: 1rem;
         display: none;
         justify-content: center;
         align-items: center;
@@ -322,9 +322,9 @@
     .header-search input {
         padding: 0 1rem;
         width: 700px;
-        height: 40px;
+        height: 45px;
         background-color: #eaeaea;
-        border: none;
+        border: 1px solid #dcdcdc;
         border-radius: 3px;
     }
 
