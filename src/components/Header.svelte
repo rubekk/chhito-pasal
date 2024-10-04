@@ -264,7 +264,9 @@
 
 <style>
     .mobile-title {
-        padding: 1rem;
+        padding: 1rem 0 0;
+        background-color: #fff;
+        background: linear-gradient(90deg, #a8e6cf, #dcedf7);
         display: none;
         justify-content: center;
         align-items: center;
@@ -272,7 +274,8 @@
     .header {
         padding: 1rem 2rem;
         background-color: #fff;
-        border-bottom: 1px solid #dcdcdc;
+        background: linear-gradient(90deg, #a8e6cf, #dcedf7);
+        /* border-bottom: 1px solid #dcdcdc; */
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -323,7 +326,7 @@
         padding: 0 1rem;
         width: 700px;
         height: 45px;
-        background-color: #eaeaea;
+        background-color: #f1fdff;
         border: 1px solid #dcdcdc;
         border-radius: 3px;
     }
@@ -477,11 +480,11 @@
             display: none;
         }
         .header-cart {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 50px;
             background-color: #fff;
-            border: 1px solid #797979;
-            border-radius: 50%;
+            border: 1px solid #dcdcdc;
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -489,10 +492,28 @@
             bottom: 1.5rem;
             right: 1.5rem;
             z-index: 100;
+            background: linear-gradient(90deg, #a8e6cf, #dcedf7);            
+            background-size: 400% 400%;
+            animation: gradient 7s ease infinite;
+        }
+        .header-cart i {
+            color: rgba(0, 0, 0, 0.8);
         }
         .header-cart span {
-            top: 7px;
-            right: 9px;
+            top: 5px;
+            right: 5px;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
     }
     @media(max-width: 825px) {
