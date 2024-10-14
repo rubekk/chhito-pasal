@@ -85,6 +85,10 @@
     };
 </script>
 
+<svelte:head>
+  <title>ChhitoPasal - Groceries delivered in minutes</title>
+</svelte:head>
+
 <div class="products-wrapper">
     <h3>Featured Products</h3>
     <div class="products-container" bind:this={productsContainer} on:scroll={checkScrollButtons}>
