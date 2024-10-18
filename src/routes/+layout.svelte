@@ -1,6 +1,7 @@
 <script>
     import "./app.css"; 
     import { onMount } from "svelte";
+    import { page } from "$app/stores"; // Import the SvelteKit page store
     import Header from "./../components/Header.svelte";
     import Cart from "../components/Cart.svelte";
     import LocationPopup from "../components/LocationPopup.svelte";
@@ -11,6 +12,9 @@
     } from "$lib/store";
     import { auth } from "$lib/firebaseConfig";
     import { onAuthStateChanged } from "firebase/auth";
+
+
+    let isHomePage = false;
 
     let sAuthStore = {
         loggedIn: false,
@@ -41,9 +45,13 @@
             }
         });
     });
+
+    $: {
+        isHomePage = $page.url.pathname === "/";
+    }
 </script>
 
-<div class="header-layout">
+<div class={isHomePage ? 'header-layout' : 'header-layout mobile'}>
     <Header />
 </div>
 {#if deliveryAvailable}
@@ -83,6 +91,9 @@
 
     /* media queries */
     @media(max-width: 1200px) {
+        .mobile {
+            display: none;
+        }
        .slot-container {
             padding: 0 2rem;
        } 
@@ -92,9 +103,4 @@
             padding: 0;
        } 
     }
-    /* @media(max-width: 700px) {
-       .header-layout {
-        display: none;
-       }
-    } */
 </style>

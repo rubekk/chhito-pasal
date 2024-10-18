@@ -63,33 +63,40 @@
     };
 
     const savePhoneNumber = async () => {
-    if (newPhoneNumber.trim()) {
-        try {
-            await setDoc(
-                doc(db, "users", sAuthStore.user.uid),
-                {
-                    phoneNumber: newPhoneNumber,
-                    email: sAuthStore.user.email,  
-                    uid: sAuthStore.user.uid,      
-                },
-                { merge: true },
-            );
-            phoneNumber = newPhoneNumber;
-            showPhoneInputPopup = false;
-            newPhoneNumber = "";
-            console.log("Phone number saved successfully along with email and UID.");
-        } catch (error) {
-            console.error("Error saving phone number:", error);
+        if (newPhoneNumber.trim()) {
+            try {
+                await setDoc(
+                    doc(db, "users", sAuthStore.user.uid),
+                    {
+                        phoneNumber: newPhoneNumber,
+                        email: sAuthStore.user.email,
+                        uid: sAuthStore.user.uid,
+                    },
+                    { merge: true },
+                );
+                phoneNumber = newPhoneNumber;
+                showPhoneInputPopup = false;
+                newPhoneNumber = "";
+                console.log(
+                    "Phone number saved successfully along with email and UID.",
+                );
+            } catch (error) {
+                console.error("Error saving phone number:", error);
+            }
         }
-    }
-};
-
+    };
 
     const handleKeydown = (event) => {
         if (event.key === "Enter" && searchQuery.trim() !== "") {
             goto(`/search?query=${encodeURIComponent(searchQuery)}`);
         }
     };
+
+    const handleSearch = () => {
+        if (searchQuery.trim() !== "") {
+            goto(`/search?query=${encodeURIComponent(searchQuery)}`);
+        }
+    }
 
     const logOut = () => {
         auth.signOut();
@@ -100,13 +107,18 @@
         const dropdown = document.querySelector(".dropdown");
         const userButton = document.querySelector(".header-user");
 
-        if (showDropdown && dropdown && !dropdown.contains(event.target) && !userButton.contains(event.target)) {
+        if (
+            showDropdown &&
+            dropdown &&
+            !dropdown.contains(event.target) &&
+            !userButton.contains(event.target)
+        ) {
             showDropdown = false;
         }
     };
 
     onMount(async () => {
-        if(browser) window.addEventListener("click", handleOutsideClick);
+        if (browser) window.addEventListener("click", handleOutsideClick);
 
         if (localStorage.getItem("geoCoords")) {
             let coords = localStorage.getItem("geoCoords").split(",");
@@ -141,16 +153,16 @@
     });
 
     onDestroy(() => {
-        if(browser) window.removeEventListener("click", handleOutsideClick);
+        if (browser) window.removeEventListener("click", handleOutsideClick);
     });
 </script>
 
 <div class="mobile-title">
-    <h1 on:click={() => goto(`/`)}>Chhito<span>Pasal</span></h1>
+    <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
 </div>
 <div class="header">
     <div class="header-left">
-        <h1 on:click={() => goto(`/`)}>Chhito<span>Pasal</span></h1>
+        <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
         {#if sUserLocation.place}
             <div
                 class="header-delivery-location"
@@ -178,10 +190,11 @@
         <div class="header-search">
             <input
                 type="text"
-                placeholder="Search 'egg'"
+                placeholder="Search 'egg' 'rice'"
                 bind:value={searchQuery}
                 on:keydown={handleKeydown}
             />
+            <i on:click={handleSearch} class="fa-solid fa-search"></i>
         </div>
     </div>
 
@@ -204,10 +217,16 @@
                         <div class="dropdown-item">
                             <i class="fa-solid fa-phone"></i>
                             <span class="phoneno">{phoneNumber}</span>
-                            <i class="fa-regular fa-pen-to-square" on:click={() => (showPhoneInputPopup = true)}></i>
+                            <i
+                                class="fa-regular fa-pen-to-square"
+                                on:click={() => (showPhoneInputPopup = true)}
+                            ></i>
                         </div>
                     {:else}
-                        <div class="dropdown-item" on:click={() => (showPhoneInputPopup = true)}>
+                        <div
+                            class="dropdown-item"
+                            on:click={() => (showPhoneInputPopup = true)}
+                        >
                             <i class="fa-solid fa-phone"></i>
                             Add Phone Number
                         </div>
@@ -215,9 +234,7 @@
                     <div class="dropdown-item" on:click={() => goto("/orders")}>
                         Order history
                     </div>
-                    <div class="dropdown-item" on:click={logOut}>
-                        Logout
-                    </div>
+                    <div class="dropdown-item" on:click={logOut}>Logout</div>
                 </div>
             {/if}
         {/if}
@@ -246,16 +263,16 @@
 
 {#if showPhoneInputPopup}
     <div
-    class="popup-overlay"
-    on:click={() => (showPhoneInputPopup = false)}
+        class="popup-overlay"
+        on:click={() => (showPhoneInputPopup = false)}
     ></div>
     <div class="popup-container">
         <div class="add-edit-phone">
             <h3>{phoneNumber ? "Edit Phone Number" : "Add Phone Number"}</h3>
             <input
-            type="text"
-            bind:value={newPhoneNumber}
-            placeholder="Enter new phone number"
+                type="text"
+                bind:value={newPhoneNumber}
+                placeholder="Enter new phone number"
             />
             <button on:click={savePhoneNumber}>Save</button>
         </div>
@@ -275,7 +292,6 @@
         padding: 1rem 2rem;
         background-color: #fff;
         background: linear-gradient(90deg, #a8e6cf, #dcedf7);
-        /* border-bottom: 1px solid #dcdcdc; */
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -288,17 +304,19 @@
         gap: 2rem;
     }
 
-    .mobile-title h1, .header-left h1 {
+    .mobile-title h1,
+    .header-left h1 {
         font-size: 1.75rem;
         color: var(--blue);
     }
 
-    .mobile-title h1 span, .header-left h1 span {
+    .mobile-title h1 span,
+    .header-left h1 span {
         color: var(--green);
     }
 
     .header-delivery-location {
-        padding: .5rem;
+        padding: 0.5rem;
         font-weight: bold;
         background-color: #ecfbff;
         border: 1px solid #dcdcdc;
@@ -312,7 +330,7 @@
     }
 
     .header-location-txt {
-        margin-right: .25rem;
+        margin-right: 0.25rem;
         width: auto;
         max-width: 200px;
         font-size: 0.8rem;
@@ -322,18 +340,52 @@
         text-overflow: ellipsis;
     }
 
+    .header-search {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .header-search input {
         padding: 0 1rem;
-        width: 700px;
+        width: 650px;
         height: 45px;
+        font-weight: bold;
         background-color: #f1fdff;
         border: 1px solid #dcdcdc;
+        border-right: none;
         border-radius: 3px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        outline: none;
+    }
+
+    .header-search input::placeholder {
+        color: #888;
+        font-size: .9rem;
+        font-style: italic;
+        font-weight: bold;
+    }
+
+    .header-search i {
+        padding: 0 1rem;
+        height: 45px;
+        color: #888;
+        background-color: #f1fdff;
+        border: 1px solid #dcdcdc;
+        border-left: none;
+        border-radius: 3px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
     }
 
     .header-login,
     .header-user {
-        padding: .5rem 1rem;
+        padding: 0.5rem 1rem;
         background-color: var(--green);
         color: #fff;
         border-radius: 7px;
@@ -349,7 +401,7 @@
         cursor: pointer;
     }
 
-    .header-cart i{
+    .header-cart i {
         font-size: 1.25rem;
     }
 
@@ -379,8 +431,8 @@
         border-bottom: 1px solid #f1f1f1;
     }
 
-    .dropdown .phoneno{
-        margin: 0 2rem 0 .5rem;
+    .dropdown .phoneno {
+        margin: 0 2rem 0 0.5rem;
     }
 
     .dropdown-item:hover {
@@ -419,11 +471,11 @@
     }
 
     .add-edit-phone h3 {
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
     }
 
     .add-edit-phone button {
-        margin: .25rem 0;
+        margin: 0.25rem 0;
         padding: 0.5rem 1rem;
         width: 250px;
         height: 40px;
@@ -439,7 +491,7 @@
     }
 
     .fa-phone {
-        margin-right: .5rem;
+        margin-right: 0.5rem;
     }
 
     .popup-container input {
@@ -451,28 +503,28 @@
     }
 
     /* media queries */
-    @media(max-width: 1400px) {
+    @media (max-width: 1400px) {
         .header {
             padding: 1rem;
         }
     }
-    @media(max-width: 1375px) {
+    @media (max-width: 1375px) {
         .header-search input {
             width: 500px;
         }
     }
-    @media(max-width: 1200px) {
+    @media (max-width: 1200px) {
         .header-left,
         .header-right {
             gap: 1rem;
         }
     }
-    @media(max-width: 1160px) {
+    @media (max-width: 1160px) {
         .header-search input {
             width: 400px;
         }
     }
-    @media(max-width: 1050px) {
+    @media (max-width: 1050px) {
         .mobile-title {
             display: flex;
         }
@@ -492,7 +544,7 @@
             bottom: 1.5rem;
             right: 1.5rem;
             z-index: 100;
-            background: linear-gradient(90deg, #a8e6cf, #dcedf7);            
+            background: linear-gradient(90deg, #a8e6cf, #dcedf7);
             background-size: 400% 400%;
             animation: gradient 7s ease infinite;
         }
@@ -516,15 +568,15 @@
             }
         }
     }
-    @media(max-width: 825px) {
+    @media (max-width: 825px) {
         .header {
             display: grid;
-            grid-template-columns: 1fr 1fr; 
-            grid-template-rows: auto; 
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
             grid-template-areas:
                 "item1 item3"
-                "item2 item2"; 
-            gap: 1rem; 
+                "item2 item2";
+            gap: 1rem;
         }
         .header-left {
             grid-area: item1;
@@ -537,7 +589,7 @@
             display: flex;
             justify-content: end;
         }
-        .header-search input { 
+        .header-search input {
             width: 100%;
         }
         .dropdown {
@@ -545,7 +597,7 @@
             right: 15px;
         }
     }
-    @media(max-width: 450px) {
+    @media (max-width: 450px) {
         .header-location-txt {
             max-width: 175px;
             font-size: 0.7rem;
