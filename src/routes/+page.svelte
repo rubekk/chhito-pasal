@@ -5,104 +5,149 @@
     import Category from "../components/Category.svelte";
     import { productsData, categories } from "$lib/store";
     import { db } from "$lib/firebaseConfig";
-    import { collection, getDocs, onSnapshot } from "firebase/firestore";
+    import { collection, getDocs, doc, getDoc, onSnapshot } from "firebase/firestore";
 
-    let sProductsData = [];
+    let sFeaturedProductsData = [];
+    let sDailyEssentialsData = [];
     let productsContainer;
-    let showLeftButton = false;
-    let showRightButton = false;
+    let dailyEssentialsContainer;
+    let showLeftButtonFeatured = false;
+    let showRightButtonFeatured = false;
+    let showLeftButtonEssentials = false;
+    let showRightButtonEssentials = false;
 
-    productsData.subscribe((value) => {
-        sProductsData = value;
-    });
-
-    const getAllProducts = async () => {
+    // Fetch featured product IDs, then get the corresponding products
+    const getFeaturedProducts = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, "products"));
-            sProductsData = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const featuredProductsSnapshot = await getDocs(collection(db, "featuredProducts"));
+            const featuredProductIds = featuredProductsSnapshot.docs.map(doc => doc.data().productId);
 
-            productsData.set(sProductsData);
+            const productPromises = featuredProductIds.map(id => getDoc(doc(db, "products", id)));
+            const productDocs = await Promise.all(productPromises);
+
+            sFeaturedProductsData = productDocs
+                .filter(doc => doc.exists()) 
+                .map(doc => ({ id: doc.id, ...doc.data() }));
+
+            productsData.set(sFeaturedProductsData);
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error("Error fetching featured products:", error);
         }
     };
 
-    const listenToProductChanges = () => {
-        const productsRef = collection(db, "products");
+    // Fetch daily essentials product IDs, then get the corresponding products
+    const getDailyEssentials = async () => {
+        try {
+            const dailyEssentialsSnapshot = await getDocs(collection(db, "dailyEssentials"));
+            const dailyEssentialProductIds = dailyEssentialsSnapshot.docs.map(doc => doc.data().productId);
 
-        onSnapshot(productsRef, (querySnapshot) => {
-            querySnapshot.docChanges().forEach((change) => {
-                const updatedData = change.doc.data();
+            const productPromises = dailyEssentialProductIds.map(id => getDoc(doc(db, "products", id)));
+            const productDocs = await Promise.all(productPromises);
 
-                if (change.type === "modified") {
-                    const index = sProductsData.findIndex(
-                        (product) => product.id === change.doc.id,
-                    );
+            sDailyEssentialsData = productDocs
+                .filter(doc => doc.exists()) 
+                .map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (error) {
+            console.error("Error fetching daily essentials:", error);
+        }
+    };
 
-                    if (index !== -1) {
-                        sProductsData[index] = {
-                            ...sProductsData[index],
-                            stock: updatedData.stock,
-                            price: updatedData.price,
-                            discountedPrice: updatedData.discountedPrice,
-                        };
+    const listenToFeaturedProductChanges = () => {
+        const featuredProductsRef = collection(db, "featuredProducts");
 
-                        productsData.set([...sProductsData]);
-                    }
-                }
-            });
+        onSnapshot(featuredProductsRef, async (querySnapshot) => {
+            const featuredProductIds = querySnapshot.docs.map(doc => doc.data().productId);
+            const productPromises = featuredProductIds.map(id => getDoc(doc(db, "products", id)));
+            const productDocs = await Promise.all(productPromises);
+
+            sFeaturedProductsData = productDocs
+                .filter(doc => doc.exists())
+                .map(doc => ({ id: doc.id, ...doc.data() }));
+
+            productsData.set(sFeaturedProductsData);
+        });
+    };
+
+    const listenToDailyEssentialsChanges = () => {
+        const dailyEssentialsRef = collection(db, "dailyEssentials");
+
+        onSnapshot(dailyEssentialsRef, async (querySnapshot) => {
+            const dailyEssentialProductIds = querySnapshot.docs.map(doc => doc.data().productId);
+            const productPromises = dailyEssentialProductIds.map(id => getDoc(doc(db, "products", id)));
+            const productDocs = await Promise.all(productPromises);
+
+            sDailyEssentialsData = productDocs
+                .filter(doc => doc.exists())
+                .map(doc => ({ id: doc.id, ...doc.data() }));
         });
     };
 
     onMount(() => {
-        getAllProducts();
-        listenToProductChanges();
+        getFeaturedProducts();
+        getDailyEssentials();
+        listenToFeaturedProductChanges();
+        listenToDailyEssentialsChanges();
         checkScrollButtons();
     });
 
     const checkScrollButtons = () => {
         if (productsContainer) {
-            showLeftButton = productsContainer.scrollLeft > 0;
-            showRightButton = productsContainer.scrollLeft < productsContainer.scrollWidth - productsContainer.clientWidth;
+            showLeftButtonFeatured = productsContainer.scrollLeft > 0;
+            showRightButtonFeatured = productsContainer.scrollLeft < productsContainer.scrollWidth - productsContainer.clientWidth;
+        }
+        if (dailyEssentialsContainer) {
+            showLeftButtonEssentials = dailyEssentialsContainer.scrollLeft > 0;
+            showRightButtonEssentials = dailyEssentialsContainer.scrollLeft < dailyEssentialsContainer.scrollWidth - dailyEssentialsContainer.clientWidth;
         }
     };
 
-    const scrollLeft = () => {
+    const scrollLeftFeatured = () => {
         if (productsContainer) {
             productsContainer.scrollBy({ left: -200, behavior: 'smooth' });
-            checkScrollButtons(); // Update button visibility after scrolling
+            checkScrollButtons();
         }
     };
 
-    const scrollRight = () => {
+    const scrollRightFeatured = () => {
         if (productsContainer) {
             productsContainer.scrollBy({ left: 200, behavior: 'smooth' });
-            checkScrollButtons(); // Update button visibility after scrolling
+            checkScrollButtons();
+        }
+    };
+
+    const scrollLeftEssentials = () => {
+        if (dailyEssentialsContainer) {
+            dailyEssentialsContainer.scrollBy({ left: -200, behavior: 'smooth' });
+            checkScrollButtons();
+        }
+    };
+
+    const scrollRightEssentials = () => {
+        if (dailyEssentialsContainer) {
+            dailyEssentialsContainer.scrollBy({ left: 200, behavior: 'smooth' });
+            checkScrollButtons();
         }
     };
 </script>
 
 <svelte:head>
-  <title>ChhitoPasal - Groceries delivered in minutes</title>
+    <title>ChhitoPasal - Groceries delivered in minutes</title>
 </svelte:head>
 
 <div class="products-wrapper">
     <h3>Featured Products</h3>
     <div class="products-container" bind:this={productsContainer} on:scroll={checkScrollButtons}>
-        {#each sProductsData as productData}
+        {#each sFeaturedProductsData as productData}
             <Product {productData} />
         {/each}
     </div>
-    {#if showLeftButton}
-        <button class="scroll-button scroll-left" on:click={scrollLeft}>
+    {#if showLeftButtonFeatured}
+        <button class="scroll-button scroll-left" on:click={scrollLeftFeatured}>
             <i class="fa-solid fa-chevron-left"></i>
         </button>
     {/if}
-    {#if showRightButton}
-        <button class="scroll-button scroll-right" on:click={scrollRight}>
+    {#if showRightButtonFeatured}
+        <button class="scroll-button scroll-right" on:click={scrollRightFeatured}>
             <i class="fa-solid fa-chevron-right"></i>
         </button>
     {/if}
@@ -112,19 +157,38 @@
     <h3>Categories</h3>
     <div class="categories-container">
         {#each categories as category}
-        <Category {category} />
+            <Category {category} />
         {/each}
     </div>
 </div>
 
+<div class="daily-essentials-wrapper">
+    <h3>Daily Essentials</h3>
+    <div class="products-container" bind:this={dailyEssentialsContainer} on:scroll={checkScrollButtons}>
+        {#each sDailyEssentialsData as productData}
+            <Product {productData} />
+        {/each}
+    </div>
+    {#if showLeftButtonEssentials}
+        <button class="scroll-button scroll-left" on:click={scrollLeftEssentials}>
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+    {/if}
+    {#if showRightButtonEssentials}
+        <button class="scroll-button scroll-right" on:click={scrollRightEssentials}>
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    {/if}
+</div>
+
 <style>
-    .products-wrapper {
+    .products-wrapper, .daily-essentials-wrapper {
         padding: 2rem 0;
         width: 100%;
         position: relative; 
     }
 
-    .products-wrapper h3, .categories-wrapper h3 {
+    .products-wrapper h3, .categories-wrapper h3, .daily-essentials-wrapper h3 {
         margin: 0 0 1rem .5rem;
     }
 
@@ -143,7 +207,6 @@
     .categories-wrapper {
         padding: 2rem 0;
     }
-
     .categories-container {
         flex-wrap: wrap;
     }
@@ -174,9 +237,8 @@
         display: none; 
     }
 
-    /* media queries */
     @media(max-width: 800px) {
-        .products-wrapper, .categories-wrapper {
+        .products-wrapper, .categories-wrapper, .daily-essentials-wrapper {
             padding: 2rem 1rem;
         }
         .categories-container {
