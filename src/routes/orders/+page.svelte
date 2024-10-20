@@ -21,8 +21,6 @@
                 const querySnapshot = await getDocs(q);
 
                 orderHistory = querySnapshot.docs.map(doc => doc.data());
-
-                console.log(orderHistory);
                 loading = false;
             } catch (error) {
                 console.error("Error fetching order history:", error);
@@ -66,6 +64,14 @@
                     <span class="order-date">{order.orderDate}</span>
                     <span class="order-time">{order.orderTime}</span>
                 </div>
+                <div class="order-status {order.status}">
+                    Status: {order.status}
+                </div>
+                {#if order.status === "pending" || order.status === "on the way"}
+                    <div class="delivery-message">
+                        Your order will be delivered in {order.orderDeliveryTime}.
+                    </div>
+                {/if}
                 <table class="order-items">
                     <thead>
                         <tr>
@@ -121,15 +127,21 @@
     }
 
     .order-card {
-        width: 400px;
+        width: 100%;
+        max-width: 400px;
         padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         background-color: #fff;
         border: 1px solid #eaeaea;
         display: flex;
         flex-direction: column;
-        margin: 0; /* Remove margin to prevent stretching */
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
 
     .order-header {
@@ -137,7 +149,39 @@
         justify-content: space-between;
         margin-bottom: 1rem;
         font-size: 1rem;
+        font-weight: bold;
         color: var(--blue);
+    }
+
+    .order-status {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .order-status.pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .order-status.on-the-way {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .order-status.delivered {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .delivery-message {
+        margin-top: 0.5rem;
+        font-size: 1rem;
+        color: #6c757d;
+        font-style: italic;
     }
 
     .order-items {
@@ -147,14 +191,16 @@
     }
 
     .order-items th, .order-items td {
-        padding: 0.5rem;
+        padding: 0.75rem;
         border-bottom: 1px solid #eaeaea;
         text-align: left;
+        font-size: 0.9rem;
     }
 
     .order-items th {
         background-color: var(--blue);
         color: #fff;
+        font-weight: 600;
     }
 
     .order-items td {
@@ -163,7 +209,8 @@
 
     .order-total {
         text-align: right;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+        font-weight: bold;
         color: var(--green);
     }
 </style>
