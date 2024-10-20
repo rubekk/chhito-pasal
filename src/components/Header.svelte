@@ -155,6 +155,8 @@
     onDestroy(() => {
         if (browser) window.removeEventListener("click", handleOutsideClick);
     });
+
+    setInterval(() => console.log(sUserLocation), 2000)
 </script>
 
 <div class="mobile-title">
@@ -179,7 +181,7 @@
         {:else}
             <div
                 class="header-delivery-location"
-                on:click={() => (showLocationPopup = false)}
+                on:click={() => (showLocationPopup = true)}
             >
                 Delivery Location <i class="fa-solid fa-chevron-down"></i>
             </div>
@@ -248,7 +250,7 @@
 </div>
 
 {#if showLocationPopup}
-    <div class="popup-overlay"></div>
+    <div class="popup-overlay" on:click={() => {showLocationPopup = !sUserLocation.coords.length>0}}></div>
     <div class="popup-container">
         <LocationPopup />
     </div>

@@ -6,6 +6,7 @@
     import { productsData, categories } from "$lib/store";
     import { db } from "$lib/firebaseConfig";
     import { collection, getDocs, doc, getDoc, onSnapshot } from "firebase/firestore";
+    import Footer from "../components/Footer.svelte";
 
     let sFeaturedProductsData = [];
     let sDailyEssentialsData = [];
@@ -179,6 +180,10 @@
             <i class="fa-solid fa-chevron-right"></i>
         </button>
     {/if}
+</div>
+
+<div class="footer">
+    <Footer />
 </div>
 
 <style>

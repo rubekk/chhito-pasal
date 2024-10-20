@@ -75,6 +75,10 @@
             alert("Please log in and provide a phone number to confirm the order.");
             return;
         }
+        if (!sUserLocation.coords.length>0) {
+            alert("Please provide your location");
+            return;
+        }
 
         const orderTime = new Date().toLocaleTimeString();
         const orderDate = new Date().toLocaleDateString();
