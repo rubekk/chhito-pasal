@@ -21,34 +21,58 @@
                 where("orderUserId", "==", sAuthStore.user.uid),
             );
 
-            // Use onSnapshot to listen for changes in real-time
             onSnapshot(
-                q,
-                (querySnapshot) => {
-                    orderHistory = querySnapshot.docs.map((doc) => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    }));
-                    loading = false; // Stop loading once data is fetched
-                },
-                (error) => {
-                    console.error("Error fetching order history:", error);
-                    loading = false;
-                },
-            );
+    q,
+    (querySnapshot) => {
+        orderHistory = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+
+        console.log("Before sorting:", orderHistory);
+
+        // Sort orders based on orderDate and orderTime
+        orderHistory.sort((a, b) => {
+            // Convert orderDate from "DD/MM/YYYY" to "YYYY-MM-DD"
+            const formatDate = (dateStr) => {
+                const [day, month, year] = dateStr.split('/');
+                return `${year}-${month}-${day}`;
+            };
+
+            // Create Date objects for comparison
+            const dateA = a.orderDate && a.orderTime
+                ? new Date(`${formatDate(a.orderDate)}T${a.orderTime}`)
+                : new Date(0); // Default to epoch if missing
+            const dateB = b.orderDate && b.orderTime
+                ? new Date(`${formatDate(b.orderDate)}T${b.orderTime}`)
+                : new Date(0); // Default to epoch if missing
+            
+            return dateB - dateA; // Latest orders first
+        });
+
+        console.log("After sorting:", orderHistory);
+
+        loading = false;
+    },
+    (error) => {
+        console.error("Error fetching order history:", error);
+        loading = false;
+    },
+);
+
         }
     };
 
     function calculateEstimatedDeliveryTime(order) {
         const orderDate = new Date(`${order.orderDate} ${order.orderTime}`);
-        const deliveryDuration = parseInt(order.orderDeliveryTime) || 0; // Delivery duration in minutes
+        const deliveryDuration = parseInt(order.orderDeliveryTime) || 0;
         const estimatedDelivery = new Date(
             orderDate.getTime() + deliveryDuration * 60000,
-        ); // Adding minutes to order time
+        );
         return estimatedDelivery.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
-        }); // Format as HH:MM AM/PM
+        });
     }
 
     onMount(() => {
@@ -144,40 +168,42 @@
     }
 
     .order-history-container {
-        padding: 1rem; /* Reduced padding for a more compact look */
+        padding: 1rem;
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem; /* Reduced gap for tighter spacing */
+        gap: 1rem;
         justify-content: center;
     }
 
     .order-card {
         width: 100%;
-        max-width: 350px; /* Reduced max width */
-        padding: 1rem; /* Reduced padding */
-        border-radius: 8px; /* Slightly less rounding */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+        max-width: 350px;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         background-color: #fff;
         border: 1px solid #eaeaea;
         display: flex;
         flex-direction: column;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+            transform 0.2s,
+            box-shadow 0.2s;
     }
 
     .order-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem; /* Reduced margin */
-        font-size: 0.9rem; /* Smaller font size */
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
         font-weight: bold;
         color: var(--blue);
     }
 
     .order-status {
-        font-size: 0.9rem; /* Smaller font size */
-        margin-bottom: 0.3rem; /* Reduced margin */
-        padding: 0.2rem 0.4rem; /* Reduced padding */
-        border-radius: 4px; /* Slightly less rounding */
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
         font-weight: bold;
         text-align: center;
     }
@@ -198,8 +224,8 @@
     }
 
     .delivery-message {
-        margin: 0.3rem 0; /* Reduced margin */
-        font-size: 0.9rem; /* Smaller font size */
+        margin: 0.3rem 0;
+        font-size: 0.9rem;
         color: #6c757d;
         font-style: italic;
     }
@@ -207,15 +233,15 @@
     .order-items {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 0.5rem; /* Reduced margin */
+        margin-bottom: 0.5rem;
     }
 
     .order-items th,
     .order-items td {
-        padding: 0.5rem; /* Reduced padding */
+        padding: 0.5rem;
         border-bottom: 1px solid #eaeaea;
         text-align: left;
-        font-size: 0.8rem; /* Smaller font size */
+        font-size: 0.8rem;
     }
 
     .order-items th {
@@ -230,9 +256,8 @@
 
     .order-total {
         text-align: right;
-        font-size: 1.1rem; /* Slightly smaller font size */
+        font-size: 1.1rem;
         font-weight: bold;
         color: var(--green);
     }
 </style>
-

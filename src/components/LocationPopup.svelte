@@ -54,10 +54,21 @@
 
         map = leaflet
             .map(mapElem, { zoomControl: true })
-            .setView([27.700001, 85.333336], 13);
+            .setView([27.666613, 85.332021], 14);
         leaflet
-            .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
+            .tileLayer("http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+                maxZoom: 20,
+                subdomains: ["mt0", "mt1", "mt2", "mt3"],
+            })
             .addTo(map);
+
+        let defaultMarker = leaflet.divIcon({
+            className: "custom-div-icon",
+            html: "<div class='default-marker-outer' style='height: 30px; width: 30px; background-color: rgba(0, 0, 0, 0.4); border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 193;'><div class='default-marker' style='width: 20px; height: 20px; background-color: #2a73f4; border: 2px solid rgb(76, 192, 76); border-radius: 50%; z-index: 193;'></div></div>",
+            iconSize: [20, 20],
+            iconAnchor: [10, 20],
+            popupAnchor: [5, -7.5],
+        });
 
         map.on("click", async (e) => {
             mapCoords = [e.latlng.lat, e.latlng.lng];
@@ -65,7 +76,9 @@
             if (marker) marker.setLatLng([mapCoords[0], mapCoords[1]]);
             else
                 marker = leaflet
-                    .marker([mapCoords[0], mapCoords[1]])
+                    .marker([mapCoords[0], mapCoords[1]], {
+                        icon: defaultMarker,
+                    })
                     .addTo(map);
 
             isLocationSelected = true;
@@ -84,7 +97,8 @@
         );
 
         sUserLocation.distance = distance;
-        sUserLocation.deliveryTime = sUserLocation.distance < 1.5 ? time : " - ";
+        sUserLocation.deliveryTime =
+            sUserLocation.distance < 1.5 ? time : " - ";
         sUserLocation.deliveryAvailable = sUserLocation.distance < 1.5;
 
         localStorage.setItem("geoCoords", sUserLocation.coords);
@@ -102,7 +116,7 @@
 <div class="location-popup">
     <h2>Select Delivery Location</h2>
     <button on:click={getGeoLocation}>Get Current Location</button>
-    <button on:click={handleMap}>Type Location Manually</button>
+    <button on:click={handleMap}>Select Location Manually</button>
 
     {#if geoErrorMessage}
         <p class="error-message">{geoErrorMessage}</p>
@@ -134,7 +148,7 @@
     .location-popup {
         padding: 2rem;
         width: 400px;
-        background-color: white;
+        background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         display: flex;
@@ -143,12 +157,12 @@
         flex-direction: column;
     }
 
-    .location-popup h2{
+    .location-popup h2 {
         margin-bottom: 1rem;
     }
 
     button {
-        margin: .25rem 0;
+        margin: 0.25rem 0;
         padding: 0.5rem 1rem;
         width: 250px;
         height: 40px;
@@ -165,7 +179,7 @@
 
     .map-container {
         width: 100%;
-        margin-top: 1rem;
+        margin-top: 2rem;
         display: flex;
         flex-direction: column;
         align-items: center;

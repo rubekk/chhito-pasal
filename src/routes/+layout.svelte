@@ -59,7 +59,10 @@
         <slot />
     </div>
 {:else}
-    Sorry, we are not available at your location yet!
+    <div class="not-available">
+        <p>Sorry, we are not available at your location <strong>yet!</strong></p>
+        <img src="/sad.png" alt="">
+    </div>
 {/if}
 {#if sShowLocationPopup}
     <div class="location-popup-container">
@@ -87,6 +90,14 @@
     }
     .slot-container{
         padding: 0 5rem;
+    }
+    .not-available{ 
+        margin: 2rem auto;
+        width: max-content;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
     }
 
     /* media queries */

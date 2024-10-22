@@ -119,13 +119,13 @@
                 </div>
             {/if}
             <div class="product-prices">
-                {#if productData.discountedPrice}
+                {#if productData.discountedPrice < productData.price}
                     <div class="discounted-price">
                         Rs. {productData.discountedPrice}
                     </div>
                     <div class="original-price">Rs. {productData.price}</div>
                 {:else}
-                    <div class="normal-price">Rs. {productData.price}</div>
+                    <div class="discounted-price">Rs. {productData.price}</div>
                 {/if}
             </div>
         </div>

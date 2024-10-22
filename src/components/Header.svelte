@@ -4,13 +4,14 @@
     import { goto } from "$app/navigation";
     import { auth, db } from "$lib/firebaseConfig";
     import { onAuthStateChanged } from "firebase/auth";
-    import { doc, getDoc, setDoc } from "firebase/firestore";
+    import { doc, setDoc, onSnapshot } from "firebase/firestore";
     import LocationPopup from "./LocationPopup.svelte";
     import Login from "./Login.svelte";
     import {
         authStore,
         storeLocation,
         userLocation,
+        hasPhone,
         cartProducts,
         showCart,
     } from "$lib/store";
@@ -22,6 +23,7 @@
     };
     let sStoreLocation = [];
     let sUserLocation = {};
+    let sHasPhone = false;
     let sCartProductsCount = 0;
     let sShowCart = false;
     let showLocationPopup = false;
@@ -46,6 +48,11 @@
             showLocationPopup = sUserLocation.coords.length == 0;
         }, 500);
     });
+    hasPhone.subscribe((value) => {
+        sHasPhone = value;
+
+        showLoginPopup = !sHasPhone && sAuthStore.loggedIn;
+    });
     cartProducts.subscribe((value) => {
         sCartProductsCount = value.length;
     });
@@ -53,13 +60,16 @@
         sShowCart = value;
     });
 
-    const checkPhoneNumber = async (userId) => {
-        const userDoc = await getDoc(doc(db, "users", userId));
-        if (userDoc.exists() && userDoc.data().phoneNumber) {
-            phoneNumber = userDoc.data().phoneNumber;
-        } else {
-            phoneNumber = null;
-        }
+    const checkPhoneNumber = (userId) => {
+        const userDocRef = doc(db, "users", userId);
+
+        const unsubscribe = onSnapshot(userDocRef, (userDoc) => {
+            if (userDoc.exists() && userDoc.data().phoneNumber) {
+                phoneNumber = userDoc.data().phoneNumber; 
+            } else {
+                phoneNumber = null; 
+            }
+        });
     };
 
     const savePhoneNumber = async () => {
@@ -77,9 +87,6 @@
                 phoneNumber = newPhoneNumber;
                 showPhoneInputPopup = false;
                 newPhoneNumber = "";
-                console.log(
-                    "Phone number saved successfully along with email and UID.",
-                );
             } catch (error) {
                 console.error("Error saving phone number:", error);
             }
@@ -96,7 +103,7 @@
         if (searchQuery.trim() !== "") {
             goto(`/search?query=${encodeURIComponent(searchQuery)}`);
         }
-    }
+    };
 
     const logOut = () => {
         auth.signOut();
@@ -142,8 +149,16 @@
 
         onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
+                console.log("hello");
+
                 sAuthStore.loggedIn = true;
                 sAuthStore.user = currentUser;
+                sAuthStore.user.displayName = sAuthStore.user.displayName
+                    ? sAuthStore.user.displayName
+                    : sAuthStore.user.email
+                      ? sAuthStore.user.email.split("@")[0].substring(0, 7)
+                      : "there";
+
                 checkPhoneNumber(currentUser.uid);
             } else {
                 sAuthStore.loggedIn = false;
@@ -248,7 +263,12 @@
 </div>
 
 {#if showLocationPopup}
-    <div class="popup-overlay" on:click={() => {showLocationPopup = !sUserLocation.coords.length>0}}></div>
+    <div
+        class="popup-overlay"
+        on:click={() => {
+            showLocationPopup = !sUserLocation.coords.length > 0;
+        }}
+    ></div>
     <div class="popup-container">
         <LocationPopup />
     </div>
@@ -362,7 +382,7 @@
 
     .header-search input::placeholder {
         color: #888;
-        font-size: .9rem;
+        font-size: 0.9rem;
         font-style: italic;
         font-weight: bold;
     }

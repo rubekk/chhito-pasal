@@ -15,6 +15,9 @@ export const userLocation= writable({
     deliveryAvailable: true
 });
 
+
+export const hasPhone = writable(false);
+
 export const productsData= writable([]);
 
 export const categories = [

@@ -85,7 +85,7 @@
     </div>
 
     {#if filteredProducts.length === 0}
-        <p class="no-results">No results found for "{searchQuery}".</p>
+        <p class="no-results">No results found for "{searchQuery}"</p>
     {/if}
 </div>
 

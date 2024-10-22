@@ -18,7 +18,8 @@
     };
     let sCartProducts = [];
     let totalPrice = 0;
-    let deliveryCharge = 0;
+    let totalSavings = 0;
+    let deliveryCharge = 20;
     let phoneInput = ""; 
     let phoneNumber = null;
 
@@ -68,7 +69,16 @@
         sCartProducts.forEach((product) => {
             totalPrice += product.totalPrice;
         });
+
+        handleTotalSavings();
     };
+
+    const handleTotalSavings = () => {
+        totalSavings = 0;
+        sCartProducts.forEach(product => {
+            totalSavings += ((product.price - product.discountedPrice) * product.count);
+        })
+    }
 
     const confirmOrder = async () => {
         if (!sAuthStore.loggedIn || !phoneInput) {
@@ -154,13 +164,13 @@
     };
 
     $: if (sCartProducts) handleTotalPrice();
+    $: deliveryCharge = totalPrice >= 400 ? 0 : 20;
 
-    // Fetch phone number from the user document if logged in
     if (sAuthStore.loggedIn) {
         getDoc(doc(db, "users", sAuthStore.user.uid)).then((userDoc) => {
             if (userDoc.exists() && userDoc.data().phoneNumber) {
                 phoneNumber = userDoc.data().phoneNumber;
-                phoneInput = phoneNumber; // Prefill the phone number input
+                phoneInput = phoneNumber; 
             }
         });
     }
@@ -193,7 +203,7 @@
                         </div>
                         <div class="cart-product-info">
                             <div class="cart-product-price">
-                                Rs. {cartProduct.price} x {cartProduct.count} = Rs.
+                                Rs. {cartProduct.discountedPrice ? cartProduct.discountedPrice : cartProduct.price} x {cartProduct.count} = Rs.
                                 {cartProduct.totalPrice}
                             </div>
                             <div class="cart-product-controls">
@@ -223,12 +233,14 @@
 
         <div class="cart-summary">
             <div>Total Price: <span>Rs. {totalPrice}</span></div>
-            <div>Delivery Charge: <span>Rs. {deliveryCharge}</span></div>
+            <div>Delivery Charge: <span>{deliveryCharge > 0 ? `Rs. ${deliveryCharge}` : 'Free'}</span></div>
+            <div class="savings">
+                Savings <span>Rs. {totalSavings}</span>
+            </div>
             <div class="total-amount">
                 Total Amount: <span>Rs. {totalPrice + deliveryCharge}</span>
             </div>
     
-            <!-- Phone number input field -->
             {#if sAuthStore.loggedIn}
                 <div class="phone-input-section">
                     <label for="phone">Phone:</label>
@@ -253,7 +265,7 @@
 
 <style>
     .cart-products-container {
-        padding: 2rem 2rem 1rem;
+        padding: 1rem 1.5rem;
         width: 350px;
         height: 100vh;
         background-color: #fff;
@@ -271,7 +283,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     .cart-title {
@@ -296,9 +308,8 @@
     .cart-product {
         display: flex;
         align-items: center;
-        padding: 1rem 0;
+        padding: .75rem 0;
         border-bottom: 1px solid #e0e0e0;
-        margin-bottom: 1rem;
     }
 
     .cart-product-img {
@@ -314,7 +325,7 @@
     }
 
     .cart-product-name {
-        font-size: 1.1rem;
+        font-size: .9rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
@@ -364,18 +375,21 @@
     .cart-summary div {
         display: flex;
         justify-content: space-between;
-        font-size: 1rem;
         margin-bottom: 0.5rem;
+    }
+
+    .savings {
+        font-style: italic;
+        color: var(--green);
     }
 
     .total-amount {
         font-weight: bold;
-        font-size: 1.2rem;
         color: var(--green);
     }
 
     .confirm-order-btn {
-        margin-top: 1rem;
+        margin-top: .5rem;
         width: 100%;
         padding: 0.75rem;
         background-color: var(--blue);
@@ -402,7 +416,7 @@
     .phone-input-section {
         display: flex;
         align-items: center;
-        margin-top: 1rem;
+        margin-top: .5rem;
         gap: 1rem;
     }
 
