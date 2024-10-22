@@ -155,8 +155,6 @@
     onDestroy(() => {
         if (browser) window.removeEventListener("click", handleOutsideClick);
     });
-
-    setInterval(() => console.log(sUserLocation), 2000)
 </script>
 
 <div class="mobile-title">
