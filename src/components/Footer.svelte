@@ -1,57 +1,63 @@
 <script>
-    const email = "support@chhitopasal.com"; // Replace with your actual support email
-    const phoneNumber = "+977 123-456-7890"; // Replace with your actual phone number
+    const email = "support@chhitopasal.com";
+    const phoneNumber = "+977 123-456-7890";
 </script>
 
 <footer class="footer">
     <div class="footer-content">
+        <div class="footer-item">
+            <strong><a href="/faq">FAQ</a></strong>
+        </div>
         <div class="footer-item">
             <strong>Email:</strong> <a href="mailto:{email}">{email}</a>
         </div>
         <div class="footer-item">
             <strong>Phone:</strong> <a href="tel:{phoneNumber}">{phoneNumber}</a>
         </div>
-        <div class="footer-item">
-            <strong><a href="/faq">FAQ</a></strong>
-        </div>
     </div>
 </footer>
 
 <style>
     .footer {
-        background-color: #f9f9f9; /* Light background color to match the parent */
-        padding: 1rem 0; /* Padding for top and bottom */
-        border-top: 1px solid #eaeaea; /* Top border for separation */
+        padding: 3rem 0 1rem;
     }
 
     .footer-content {
         display: flex;
-        justify-content: center; /* Center the content */
-        align-items: center; /* Center vertically */
-        gap: 2rem; /* Space between items */
-        max-width: 1200px; /* Limit the maximum width */
-        margin: 0 auto; /* Center the footer on the page */
+        justify-content: space-evenly;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
     .footer-item {
         display: flex;
-        align-items: center; /* Center items vertically */
-        font-size: 1rem; /* Font size */
-        color: #333; /* Text color */
+        align-items: center;
+        font-size: 1rem;
+        color: #333;
     }
 
     .footer-item a {
-        color: var(--blue); /* Theme color for links */
-        text-decoration: none; /* Remove underline */
-        margin-left: 0.5rem; /* Space between label and link */
-        transition: color 0.2s; /* Transition for hover effect */
+        color: var(--blue);
+        text-decoration: none;
+        margin-left: 0.5rem;
+        transition: color 0.2s;
     }
 
     .footer-item a:hover {
-        color: var(--dark-blue); /* Darker shade on hover */
+        color: var(--dark-blue);
     }
 
     strong {
-        margin-right: 0.5rem; /* Space between strong and text */
+        margin-right: 0.5rem; 
+    }
+
+    /* media queries */
+    @media (max-width: 700px) {
+        .footer-content {
+            flex-direction: column;
+        }
     }
 </style>
