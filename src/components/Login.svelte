@@ -3,6 +3,7 @@
     import { auth, db } from "$lib/firebaseConfig";
     import {
         GoogleAuthProvider,
+        FacebookAuthProvider,
         signInWithPopup,
         onAuthStateChanged,
     } from "firebase/auth";
@@ -23,12 +24,30 @@
             console.error("Error during sign-in:", error);
         }
     };
+
+    const facebookSignIn = async () => {
+        const provider = new FacebookAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            const credential = FacebookAuthProvider.credentialFromResult(result);
+            const accessToken = credential.accessToken;
+
+            alert("Logged in with Facebook!");
+        } catch (error) {
+            console.error("Facebook login failed:", error);
+            alert("Error during Facebook login: " + error.message);
+        }
+    }
+
     const checkPhoneNumber = async (userId) => {
         const userDoc = await getDoc(doc(db, "users", userId));
         if (userDoc.exists() && userDoc.data().phoneNumber) {
             phoneConfirmed = true;
         }
     };
+
     const confirmPhoneNumber = async () => {
         if (phoneNumber.trim()) {
             phoneConfirmed = true;
@@ -37,6 +56,7 @@
             closePopup = true;
         }
     };
+
     const savePhoneNumberToDatabase = async (userId, phoneNumber) => {
         try {
             await setDoc(doc(db, "users", userId), {
@@ -71,7 +91,7 @@
             <h1>Chhito<span>Pasal</span></h1>
             <p>Login with Google or Facebook</p>
             <button on:click={googleSignIn}>Google</button>
-            <button on:click={googleSignIn}>Facebook</button>
+            <button on:click={facebookSignIn}>Facebook</button>
         {:else if !phoneConfirmed}
             <label for="phone">Enter your phone number:</label>
             <input
