@@ -132,14 +132,14 @@
             orderLocation: sUserLocation.place,
             orderDistance: sUserLocation.distance,
             orderLocationCoords: sUserLocation.coords,
-            orderDeliveryTime: sUserLocation.deliveryTime + "mins",
+            orderDeliveryTime: sUserLocation.deliveryTime + " mins",
             orderUserId: sAuthStore.user.uid,
             orderUsername: sAuthStore.user.displayName,
             orderPhoneNumber: phoneInput, // Use the phoneInput value
             orderEmail: sAuthStore.user.email,
             orderProducts: sCartProducts.map((product) => ({
                 productName: product.productName,
-                price: product.price,
+                discountedPrice: product.discountedPrice,
                 quantity: product.count,
             })),
             status: "pending",

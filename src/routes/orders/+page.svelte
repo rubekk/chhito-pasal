@@ -22,44 +22,40 @@
             );
 
             onSnapshot(
-    q,
-    (querySnapshot) => {
-        orderHistory = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
+                q,
+                (querySnapshot) => {
+                    orderHistory = querySnapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
 
-        console.log("Before sorting:", orderHistory);
+                    // const dateStringArr = orderHistory.map(item => item.orderDate + " " + item.orderTime);
+                    // let formattedDateStringArr = [];
+                    // dateStringArr.forEach(dateString => {
+                    //     const [datePart, timePart] = dateString.split(' ');
+                    //     const [day, month, year] = datePart.split('/');
+                    //     const formattedDateString = `${year}-${month}-${day}T${timePart}`;
+                        
+                    //     const dateObject = new Date(formattedDateString);
 
-        // Sort orders based on orderDate and orderTime
-        orderHistory.sort((a, b) => {
-            // Convert orderDate from "DD/MM/YYYY" to "YYYY-MM-DD"
-            const formatDate = (dateStr) => {
-                const [day, month, year] = dateStr.split('/');
-                return `${year}-${month}-${day}`;
-            };
+                    //     formattedDateStringArr.push(dateObject);
+                    //     formattedDateStringArr = [...formattedDateStringArr];
+                    // })
+                    // formattedDateStringArr.sort((a, b) =>  b - a);
 
-            // Create Date objects for comparison
-            const dateA = a.orderDate && a.orderTime
-                ? new Date(`${formatDate(a.orderDate)}T${a.orderTime}`)
-                : new Date(0); // Default to epoch if missing
-            const dateB = b.orderDate && b.orderTime
-                ? new Date(`${formatDate(b.orderDate)}T${b.orderTime}`)
-                : new Date(0); // Default to epoch if missing
-            
-            return dateB - dateA; // Latest orders first
-        });
+                    orderHistory.sort((a, b) => {
+                        const dateA = new Date(`${a.orderDate.split('/').reverse().join('-')}T${a.orderTime}`);
+                        const dateB = new Date(`${b.orderDate.split('/').reverse().join('-')}T${b.orderTime}`);
+                        return dateB - dateA; 
+                    });
 
-        console.log("After sorting:", orderHistory);
-
-        loading = false;
-    },
-    (error) => {
-        console.error("Error fetching order history:", error);
-        loading = false;
-    },
-);
-
+                    loading = false;
+                },
+                (error) => {
+                    console.error("Error fetching order history:", error);
+                    loading = false;
+                },
+            );
         }
     };
 
@@ -131,7 +127,7 @@
                             <tr>
                                 <td>{product.productName}</td>
                                 <td>{product.quantity}</td>
-                                <td>Rs {product.price}</td>
+                                <td>Rs {product.discountedPrice}</td>
                             </tr>
                         {/each}
                     </tbody>
@@ -140,7 +136,7 @@
                     <strong
                         >Total: Rs {order.orderProducts.reduce(
                             (total, product) =>
-                                total + product.price * product.quantity,
+                                total + product.discountedPrice * product.quantity,
                             0,
                         )}</strong
                     >
