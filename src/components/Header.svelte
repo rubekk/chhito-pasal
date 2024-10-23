@@ -149,8 +149,6 @@
 
         onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
-                console.log("hello");
-
                 sAuthStore.loggedIn = true;
                 sAuthStore.user = currentUser;
                 sAuthStore.user.displayName = sAuthStore.user.displayName

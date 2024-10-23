@@ -58,16 +58,21 @@
     };
 
     onMount(() => {
-        if(sProductsData.length > 0) return;
         getAllProducts();
         listenToProductChanges();
     });
 
-    $: searchQuery = $page.url.searchParams.get("query");
-
-    $: filteredProducts = sProductsData.filter(product => {
-        return product.productName.toLowerCase().includes(searchQuery?.toLowerCase() || "");
-    });
+    $: {
+        searchQuery = $page.url.searchParams.get("query") || "";
+        
+        if (sProductsData.length > 0) {
+            filteredProducts = sProductsData.filter(product => {
+                return product.productName.toLowerCase().includes(searchQuery.toLowerCase());
+            });
+        } else {
+            filteredProducts = [];
+        }
+    }
 </script>
 
 <div class="search-container">
@@ -142,7 +147,6 @@
         font-weight: bold;
     }
 
-    /* media queries */
     @media(max-width: 700px) {
         .search-title {
             font-size: 1.1rem;
