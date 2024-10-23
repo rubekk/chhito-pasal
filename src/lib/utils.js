@@ -46,7 +46,7 @@ export const getTravelDetails = async (start, end, customSpeed) => {
     const straightLineDistanceInMeters = straightLineDistance * 1000; 
     
     const travelTimeInHours = straightLineDistance * routeFactor / customSpeed; 
-    const travelTimeInMinutes = travelTimeInHours * 60 < 2 ? 3 : travelTimeInHours * 60; 
+    const travelTimeInMinutes = travelTimeInHours * 60 < 2 ? 5 : travelTimeInHours * 60 + 2; 
     
     return [ straightLineDistance, Math.floor(travelTimeInMinutes) ];
 };

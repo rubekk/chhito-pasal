@@ -93,7 +93,7 @@
         const [distance, time] = await getTravelDetails(
             sStoreLocation,
             sUserLocation.coords,
-            8,
+            7,
         );
 
         sUserLocation.distance = distance;
