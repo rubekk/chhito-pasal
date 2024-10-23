@@ -1,4 +1,6 @@
 <script>
+    import { goto } from '$app/navigation';
+
     const faqs = [
         {
             question: "What is Chhito Pasal?",
@@ -31,6 +33,9 @@
     ];
 </script>
 
+<button on:click={() => goto(`/`)} class="back-button">
+    <i class="fa-solid fa-arrow-left"></i> <span>Back</span>
+</button>
 <div class="faq-container">
     <h1>Frequently Asked Questions</h1>
     <div class="faq-list">
@@ -44,43 +49,70 @@
 </div>
 
 <style>
+    .back-button {
+        padding: 1rem 1rem 0;
+        font-size: 1.25rem;
+        background-color: transparent;
+        border: none;
+        color: var(--blue);
+        cursor: pointer;
+        display: none;
+        align-items: center;
+    }
+
+    .back-button i {
+        margin-right: 1rem;
+    }
+
+    .back-button span {
+        font-size: 1rem;
+        color: #000;
+    }
+
     .faq-container {
         padding: 2rem;
-        max-width: 800px; /* Max width for the content */
-        margin: 0 auto; /* Center the content */
+        max-width: 800px;
+        margin: 0 auto;
     }
 
     h1 {
-        text-align: center; /* Center the FAQ title */
-        margin-bottom: 2rem; /* Space below the title */
-        color: var(--blue); /* Use your theme color */
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--blue);
     }
 
     .faq-list {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem; /* Space between FAQ items */
+        gap: 1.5rem;
     }
 
     .faq-item {
         padding: 1.5rem;
-        border: 1px solid #eaeaea; /* Light border for each FAQ item */
-        border-radius: 8px; /* Rounded corners */
-        background-color: #f9f9f9; /* Light background color */
+        border: 1px solid #eaeaea;
+        border-radius: 8px;
+        background-color: #f9f9f9;
         transition: background-color 0.3s;
     }
 
     .faq-item:hover {
-        background-color: #f1f1f1; /* Slightly darker on hover */
+        background-color: #f1f1f1;
     }
 
     .faq-question {
-        margin: 0 0 0.5rem; /* Space below question */
-        font-weight: bold; /* Bold for questions */
+        margin: 0 0 0.5rem;
+        font-weight: bold;
     }
 
     .faq-answer {
-        margin: 0; /* No margin for answers */
-        color: #555; /* Answer text color */
+        margin: 0;
+        color: #555;
+    }
+
+    /* media queries */
+    @media (max-width: 1200px) {
+        .back-button {
+            display: flex;
+        }
     }
 </style>
