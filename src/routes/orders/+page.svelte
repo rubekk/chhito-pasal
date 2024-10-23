@@ -4,6 +4,7 @@
     import { onAuthStateChanged } from "firebase/auth";
     import { collection, query, where, onSnapshot } from "firebase/firestore";
     import { authStore } from "$lib/store";
+    import { goto } from "$app/navigation";
 
     let sAuthStore = { loggedIn: false, user: null };
     let orderHistory = [];
@@ -35,7 +36,7 @@
                     //     const [datePart, timePart] = dateString.split(' ');
                     //     const [day, month, year] = datePart.split('/');
                     //     const formattedDateString = `${year}-${month}-${day}T${timePart}`;
-                        
+
                     //     const dateObject = new Date(formattedDateString);
 
                     //     formattedDateStringArr.push(dateObject);
@@ -44,9 +45,13 @@
                     // formattedDateStringArr.sort((a, b) =>  b - a);
 
                     orderHistory.sort((a, b) => {
-                        const dateA = new Date(`${a.orderDate.split('/').reverse().join('-')}T${a.orderTime}`);
-                        const dateB = new Date(`${b.orderDate.split('/').reverse().join('-')}T${b.orderTime}`);
-                        return dateB - dateA; 
+                        const dateA = new Date(
+                            `${a.orderDate.split("/").reverse().join("-")}T${a.orderTime}`,
+                        );
+                        const dateB = new Date(
+                            `${b.orderDate.split("/").reverse().join("-")}T${b.orderTime}`,
+                        );
+                        return dateB - dateA;
                     });
 
                     loading = false;
@@ -85,6 +90,9 @@
     });
 </script>
 
+<button on:click={() => goto(`/`)} class="back-button">
+    <i class="fa-solid fa-arrow-left"></i> <span>Back</span>
+</button>
 {#if !sAuthStore.loggedIn}
     <div class="loading-container">
         <p>Login to view your orders...</p>
@@ -136,7 +144,8 @@
                     <strong
                         >Total: Rs {order.orderProducts.reduce(
                             (total, product) =>
-                                total + product.discountedPrice * product.quantity,
+                                total +
+                                product.discountedPrice * product.quantity,
                             0,
                         )}</strong
                     >
@@ -147,6 +156,26 @@
 {/if}
 
 <style>
+    .back-button {
+        padding: 1rem 1rem 0;
+        font-size: 1.25rem;
+        background-color: transparent;
+        border: none;
+        color: var(--blue);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .back-button i {
+        margin-right: 1rem;
+    }
+
+    .back-button span {
+        font-size: 1rem;
+        color: #000;
+    }
+
     .loading-container {
         display: flex;
         justify-content: center;
@@ -255,5 +284,12 @@
         font-size: 1.1rem;
         font-weight: bold;
         color: var(--green);
+    }
+
+    /* media queries */
+    @media (max-width: 1200px) {
+        .back-button {
+            display: flex;
+        }
     }
 </style>
