@@ -170,9 +170,6 @@
     });
 </script>
 
-<div class="mobile-title">
-    <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
-</div>
 <div class="header">
     <div class="header-left">
         <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
@@ -322,7 +319,6 @@
         gap: 2rem;
     }
 
-    .mobile-title h1,
     .header-left h1 {
         font-size: 1.75rem;
         color: var(--blue);
@@ -543,9 +539,6 @@
         }
     }
     @media (max-width: 1050px) {
-        .mobile-title {
-            display: flex;
-        }
         .header-left h1 {
             display: none;
         }
