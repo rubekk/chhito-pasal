@@ -90,13 +90,15 @@
             return;
         }
 
-        const orderTime = new Date().toLocaleTimeString();
-        const orderDate = new Date().toLocaleDateString();
+        const orderTime = new Date().toLocaleTimeString('en-US', {
+            timeZone: 'Asia/Kathmandu',
+            hour12: true
+        });
+        const orderDate = new Date().toISOString().split('T')[0];
         const orderDay = new Date().toLocaleDateString("en-US", {
             weekday: "long",
         });
 
-        // Fetch the current stock for each product
         const stockPromises = sCartProducts.map((product) =>
             getDoc(doc(db, "products", product.id)),
         );
@@ -164,7 +166,7 @@
     };
 
     $: if (sCartProducts) handleTotalPrice();
-    $: deliveryCharge = totalPrice >= 400 ? 0 : 20;
+    $: deliveryCharge = totalPrice >= 300 ? 0 : 20;
 
     if (sAuthStore.loggedIn) {
         getDoc(doc(db, "users", sAuthStore.user.uid)).then((userDoc) => {

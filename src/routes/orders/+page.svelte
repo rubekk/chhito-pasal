@@ -30,27 +30,14 @@
                         ...doc.data(),
                     }));
 
-                    // const dateStringArr = orderHistory.map(item => item.orderDate + " " + item.orderTime);
-                    // let formattedDateStringArr = [];
-                    // dateStringArr.forEach(dateString => {
-                    //     const [datePart, timePart] = dateString.split(' ');
-                    //     const [day, month, year] = datePart.split('/');
-                    //     const formattedDateString = `${year}-${month}-${day}T${timePart}`;
-
-                    //     const dateObject = new Date(formattedDateString);
-
-                    //     formattedDateStringArr.push(dateObject);
-                    //     formattedDateStringArr = [...formattedDateStringArr];
-                    // })
-                    // formattedDateStringArr.sort((a, b) =>  b - a);
-
                     orderHistory.sort((a, b) => {
-                        const dateA = new Date(
-                            `${a.orderDate.split("/").reverse().join("-")}T${a.orderTime}`,
-                        );
-                        const dateB = new Date(
-                            `${b.orderDate.split("/").reverse().join("-")}T${b.orderTime}`,
-                        );
+                        const dateA = new Date(`${a.orderDate} ${a.orderTime}`);
+                        const dateB = new Date(`${b.orderDate} ${b.orderTime}`);
+
+                        if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+                            console.error('Invalid Date in Order:', dateA, dateB);
+                            return 0; 
+                        }
                         return dateB - dateA;
                     });
 
@@ -65,14 +52,16 @@
     };
 
     function calculateEstimatedDeliveryTime(order) {
-        const orderDate = new Date(`${order.orderDate} ${order.orderTime}`);
+        const orderDateTimeString = `${order.orderDate} ${order.orderTime}`;
+        const orderDate = new Date(orderDateTimeString);
         const deliveryDuration = parseInt(order.orderDeliveryTime) || 0;
-        const estimatedDelivery = new Date(
-            orderDate.getTime() + deliveryDuration * 60000,
-        );
-        return estimatedDelivery.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
+        const estimatedDelivery = new Date(orderDate.getTime() + deliveryDuration * 60000);
+
+        return estimatedDelivery.toLocaleTimeString('en-US', {
+            timeZone: 'Asia/Kathmandu',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
         });
     }
 
@@ -113,13 +102,12 @@
                     <span class="order-date">{order.orderDate}</span>
                     <span class="order-time">{order.orderTime}</span>
                 </div>
-                <div class="order-status {order.status}">
+                <div class="order-status {order.status === "on the way" ? "on-the-way" : order.status}">
                     Status: {order.status}
                 </div>
-                {#if order.status === "pending" || order.status === "on the way"}
+                {#if order.status === "pending" || order.status === "on the way" || order.status === "packed"}
                     <div class="delivery-message">
-                        Delivery time: {order.orderDeliveryTime}. Your order
-                        will arrive by {calculateEstimatedDeliveryTime(order)}.
+                        Your order will be delivered in <strong>{order.orderDeliveryTime}</strong>. (arrive by <strong>{calculateEstimatedDeliveryTime(order)}</strong>)
                     </div>
                 {/if}
                 <table class="order-items">
@@ -218,29 +206,23 @@
     .order-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem;
         font-size: 0.9rem;
         font-weight: bold;
         color: var(--blue);
     }
 
     .order-status {
+        margin: 1rem 0;
         font-size: 0.9rem;
-        margin-bottom: 0.3rem;
         padding: 0.2rem 0.4rem;
         border-radius: 4px;
         font-weight: bold;
         text-align: center;
     }
 
-    .order-status.pending {
-        background-color: #fff3cd;
-        color: #856404;
-    }
-
-    .order-status.on-the-way {
-        background-color: #d1ecf1;
-        color: #0c5460;
+    .order-status.pending, .order-status.packed, .order-status.on-the-way {
+        background-color: #a9d7d2;
+        color: #313131;
     }
 
     .order-status.delivered {
@@ -249,7 +231,7 @@
     }
 
     .delivery-message {
-        margin: 0.3rem 0;
+        margin-bottom: 1rem;
         font-size: 0.9rem;
         color: #6c757d;
         font-style: italic;
