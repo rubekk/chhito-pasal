@@ -15,6 +15,7 @@ export const userLocation= writable({
     deliveryAvailable: true
 });
 
+export const welcomeShown = writable(false);
 
 export const hasPhone = writable(false);
 

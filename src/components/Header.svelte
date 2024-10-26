@@ -295,14 +295,6 @@
 {/if}
 
 <style>
-    .mobile-title {
-        padding: 1rem 0 0;
-        background-color: #fff;
-        background: linear-gradient(90deg, #a8e6cf, #dcedf7);
-        display: none;
-        justify-content: center;
-        align-items: center;
-    }
     .header {
         padding: 1rem 2rem;
         background-color: #fff;
@@ -324,7 +316,6 @@
         color: var(--blue);
     }
 
-    .mobile-title h1 span,
     .header-left h1 span {
         color: var(--green);
     }
@@ -604,7 +595,7 @@
             width: 100%;
         }
         .dropdown {
-            top: 118px;
+            top: 62px;
             right: 15px;
         }
     }

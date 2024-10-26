@@ -16,9 +16,12 @@
     let showRightButtonFeatured = false;
     let showLeftButtonEssentials = false;
     let showRightButtonEssentials = false;
+    
+    let loadingFeatured = true;
+    let loadingEssentials = true;
 
-    // Fetch featured product IDs, then get the corresponding products
     const getFeaturedProducts = async () => {
+        loadingFeatured = true;
         try {
             const featuredProductsSnapshot = await getDocs(collection(db, "featuredProducts"));
             const featuredProductIds = featuredProductsSnapshot.docs.map(doc => doc.data().productId);
@@ -27,17 +30,19 @@
             const productDocs = await Promise.all(productPromises);
 
             sFeaturedProductsData = productDocs
-                .filter(doc => doc.exists()) 
+                .filter(doc => doc.exists())
                 .map(doc => ({ id: doc.id, ...doc.data() }));
 
             productsData.set(sFeaturedProductsData);
         } catch (error) {
             console.error("Error fetching featured products:", error);
+        } finally {
+            loadingFeatured = false;
         }
     };
 
-    // Fetch daily essentials product IDs, then get the corresponding products
     const getDailyEssentials = async () => {
+        loadingEssentials = true;
         try {
             const dailyEssentialsSnapshot = await getDocs(collection(db, "dailyEssentials"));
             const dailyEssentialProductIds = dailyEssentialsSnapshot.docs.map(doc => doc.data().productId);
@@ -46,10 +51,12 @@
             const productDocs = await Promise.all(productPromises);
 
             sDailyEssentialsData = productDocs
-                .filter(doc => doc.exists()) 
+                .filter(doc => doc.exists())
                 .map(doc => ({ id: doc.id, ...doc.data() }));
         } catch (error) {
             console.error("Error fetching daily essentials:", error);
+        } finally {
+            loadingEssentials = false;
         }
     };
 
@@ -137,20 +144,24 @@
 
 <div class="products-wrapper">
     <h3>Featured Products</h3>
-    <div class="products-container" bind:this={productsContainer} on:scroll={checkScrollButtons}>
-        {#each sFeaturedProductsData as productData}
-            <Product {productData} />
-        {/each}
-    </div>
-    {#if showLeftButtonFeatured}
-        <button class="scroll-button scroll-left" on:click={scrollLeftFeatured}>
-            <i class="fa-solid fa-chevron-left"></i>
-        </button>
-    {/if}
-    {#if showRightButtonFeatured}
-        <button class="scroll-button scroll-right" on:click={scrollRightFeatured}>
-            <i class="fa-solid fa-chevron-right"></i>
-        </button>
+    {#if loadingFeatured}
+        <p>Loading featured products...</p>
+    {:else}
+        <div class="products-container" bind:this={productsContainer} on:scroll={checkScrollButtons}>
+            {#each sFeaturedProductsData as productData}
+                <Product {productData} />
+            {/each}
+        </div>
+        {#if showLeftButtonFeatured}
+            <button class="scroll-button scroll-left" on:click={scrollLeftFeatured}>
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+        {/if}
+        {#if showRightButtonFeatured}
+            <button class="scroll-button scroll-right" on:click={scrollRightFeatured}>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        {/if}
     {/if}
 </div>
 
@@ -165,20 +176,24 @@
 
 <div class="daily-essentials-wrapper">
     <h3>Daily Essentials</h3>
-    <div class="products-container" bind:this={dailyEssentialsContainer} on:scroll={checkScrollButtons}>
-        {#each sDailyEssentialsData as productData}
-            <Product {productData} />
-        {/each}
-    </div>
-    {#if showLeftButtonEssentials}
-        <button class="scroll-button scroll-left" on:click={scrollLeftEssentials}>
-            <i class="fa-solid fa-chevron-left"></i>
-        </button>
-    {/if}
-    {#if showRightButtonEssentials}
-        <button class="scroll-button scroll-right" on:click={scrollRightEssentials}>
-            <i class="fa-solid fa-chevron-right"></i>
-        </button>
+    {#if loadingEssentials}
+        <p>Loading daily essentials...</p>
+    {:else}
+        <div class="products-container" bind:this={dailyEssentialsContainer} on:scroll={checkScrollButtons}>
+            {#each sDailyEssentialsData as productData}
+                <Product {productData} />
+            {/each}
+        </div>
+        {#if showLeftButtonEssentials}
+            <button class="scroll-button scroll-left" on:click={scrollLeftEssentials}>
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+        {/if}
+        {#if showRightButtonEssentials}
+            <button class="scroll-button scroll-right" on:click={scrollRightEssentials}>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        {/if}
     {/if}
 </div>
 

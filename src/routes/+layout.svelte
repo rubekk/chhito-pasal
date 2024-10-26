@@ -1,18 +1,20 @@
 <script>
-    import "./app.css"; 
+    import "./app.css";
     import { onMount } from "svelte";
-    import { page } from "$app/stores"; // Import the SvelteKit page store
+    import { page } from "$app/stores";
+    import Welcome from "../components/Welcome.svelte";
     import Header from "./../components/Header.svelte";
     import Cart from "../components/Cart.svelte";
     import LocationPopup from "../components/LocationPopup.svelte";
     import {
         authStore,
         showCart,
-        userLocation
+        userLocation,
+        welcomeShown,
     } from "$lib/store";
     import { auth } from "$lib/firebaseConfig";
     import { onAuthStateChanged } from "firebase/auth";
-
+    import { fade } from 'svelte/transition';
 
     let isHomePage = false;
 
@@ -22,7 +24,10 @@
     };
     let sShowLocationPopup = false;
     let sShowCart = false;
+    let sWelcomeShown = false;
     let deliveryAvailable = true;
+    let showWelcome = true;
+    let runTransition = false;
 
     authStore.subscribe((value) => {
         sAuthStore = value;
@@ -32,6 +37,9 @@
     });
     userLocation.subscribe((value) => {
         deliveryAvailable = value.deliveryAvailable;
+    });
+    welcomeShown.subscribe((value) => {
+        sWelcomeShown = value;
     });
 
     onMount(() => {
@@ -44,6 +52,11 @@
                 sAuthStore.user = null;
             }
         });
+
+        setTimeout(() => {
+            showWelcome = false;
+            runTransition = true;
+        }, 2500);
     });
 
     $: {
@@ -51,27 +64,37 @@
     }
 </script>
 
-<div class={isHomePage ? 'header-layout' : 'header-layout mobile'}>
-    <Header />
-</div>
-{#if deliveryAvailable}
-    <div class="slot-container">
-        <slot />
-    </div>
-{:else}
-    <div class="not-available">
-        <p>Sorry, we are not available at your location <strong>yet!</strong></p>
-        <img src="/sad.png" alt="">
-    </div>
-{/if}
-{#if sShowLocationPopup}
-    <div class="location-popup-container">
-        <LocationPopup />
-    </div>
-{/if}
-{#if sShowCart && deliveryAvailable}
-    <div class="cart-container">
-        <Cart />
+{#if showWelcome}
+    <Welcome />
+{:else if runTransition}
+    <div class="container" transition:fade={{duration: 1000}}>
+        <div class={isHomePage ? "header-layout" : "header-layout mobile"}>
+            <Header />
+        </div>
+        {#if deliveryAvailable}
+            <div class="slot-container">
+                <slot />
+            </div>
+        {:else}
+            <div class="not-available">
+                <p>
+                    Sorry, we are not available at your location <strong
+                        >yet!</strong
+                    >
+                </p>
+                <img src="/sad.png" alt="" />
+            </div>
+        {/if}
+        {#if sShowLocationPopup}
+            <div class="location-popup-container">
+                <LocationPopup />
+            </div>
+        {/if}
+        {#if sShowCart && deliveryAvailable}
+            <div class="cart-container">
+                <Cart />
+            </div>
+        {/if}
     </div>
 {/if}
 
@@ -88,10 +111,10 @@
         right: 0;
         z-index: 110;
     }
-    .slot-container{
+    .slot-container {
         padding: 0 5rem;
     }
-    .not-available{ 
+    .not-available {
         margin: 2rem auto;
         width: max-content;
         display: flex;
@@ -101,17 +124,17 @@
     }
 
     /* media queries */
-    @media(max-width: 1200px) {
+    @media (max-width: 1200px) {
         .mobile {
             display: none;
         }
-       .slot-container {
+        .slot-container {
             padding: 0 2rem;
-       } 
+        }
     }
-    @media(max-width: 800px) {
-       .slot-container {
+    @media (max-width: 800px) {
+        .slot-container {
             padding: 0;
-       } 
+        }
     }
 </style>
