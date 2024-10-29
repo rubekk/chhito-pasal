@@ -69,7 +69,7 @@
     const checkPhoneNumber = (userId) => {
         const userDocRef = doc(db, "users", userId);
 
-        const unsubscribe = onSnapshot(userDocRef, (userDoc) => {
+        onSnapshot(userDocRef, (userDoc) => {
             if (userDoc.exists() && userDoc.data().phoneNumber) {
                 phoneNumber = userDoc.data().phoneNumber;
             } else {
