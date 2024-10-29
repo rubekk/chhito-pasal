@@ -4,7 +4,7 @@
     import { goto } from "$app/navigation";
     import { auth, db } from "$lib/firebaseConfig";
     import { onAuthStateChanged } from "firebase/auth";
-    import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+    import { doc, setDoc, onSnapshot } from "firebase/firestore";
     import LocationPopup from "./LocationPopup.svelte";
     import Login from "./Login.svelte";
     import {
@@ -589,8 +589,9 @@
     .store-messages {
         padding: 1rem 0;
         text-align: center;
-        background-color: #fff;
         color: #797979;
+        background-color: #fff;
+        border-bottom: 1px solid #dcdcdc;
     }
 
     .popup-container input {
