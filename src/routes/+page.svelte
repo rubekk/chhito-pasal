@@ -16,7 +16,6 @@
     let showRightButtonFeatured = false;
     let showLeftButtonEssentials = false;
     let showRightButtonEssentials = false;
-    
     let loadingFeatured = true;
     let loadingEssentials = true;
 
@@ -90,14 +89,6 @@
         });
     };
 
-    onMount(() => {
-        getFeaturedProducts();
-        getDailyEssentials();
-        listenToFeaturedProductChanges();
-        listenToDailyEssentialsChanges();
-        checkScrollButtons();
-    });
-
     const checkScrollButtons = () => {
         if (productsContainer) {
             showLeftButtonFeatured = productsContainer.scrollLeft > 0;
@@ -136,6 +127,14 @@
             checkScrollButtons();
         }
     };
+
+    onMount(() => {
+        getFeaturedProducts();
+        getDailyEssentials();
+        listenToFeaturedProductChanges();
+        listenToDailyEssentialsChanges();
+        checkScrollButtons();
+    });
 </script>
 
 <svelte:head>

@@ -1,8 +1,7 @@
 <script>
-    import { cartProducts, showCart } from "$lib/store";
+    import { authStore, userLocation, storeOpen, cartProducts, showCart } from "$lib/store";
     import { db } from "$lib/firebaseConfig";
     import { collection, addDoc } from "firebase/firestore";
-    import { authStore, userLocation } from "$lib/store";
     import { doc, getDoc, updateDoc } from "firebase/firestore";
 
     let sAuthStore = {
@@ -22,6 +21,7 @@
     let deliveryCharge = 20;
     let phoneInput = ""; 
     let phoneNumber = null;
+    let sStoreOpen = true;
 
     authStore.subscribe((value) => {
         sAuthStore = value;
@@ -32,6 +32,9 @@
     cartProducts.subscribe((value) => {
         sCartProducts = value;
     });
+    storeOpen.subscribe(value => {
+        sStoreOpen = value;
+    })
 
     const closeCart = () => {
         showCart.set(false);
@@ -137,7 +140,7 @@
             orderDeliveryTime: sUserLocation.deliveryTime + " mins",
             orderUserId: sAuthStore.user.uid,
             orderUsername: sAuthStore.user.displayName,
-            orderPhoneNumber: phoneInput, // Use the phoneInput value
+            orderPhoneNumber: phoneInput, 
             orderEmail: sAuthStore.user.email,
             orderProducts: sCartProducts.map((product) => ({
                 productName: product.productName,
@@ -243,7 +246,7 @@
                 Total Amount: <span>Rs. {totalPrice + deliveryCharge}</span>
             </div>
     
-            {#if sAuthStore.loggedIn}
+            {#if sAuthStore.loggedIn && sStoreOpen}
                 <div class="phone-input-section">
                     <label for="phone">Phone:</label>
                     <input
@@ -256,6 +259,10 @@
                 <button class="confirm-order-btn" on:click={confirmOrder}>
                     Confirm Order
                 </button>
+            {:else if !sStoreOpen}
+                <div class="time-message">
+                    Sorry :( We're closed now.
+                </div>
             {:else}
                 <div class="login-prompt">
                     You need to log in to confirm your order.
@@ -408,7 +415,7 @@
         margin-top: 2rem;
     }
 
-    .login-prompt {
+    .time-message, .login-prompt {
         color: #e74c3c;
         font-weight: bold;
         text-align: center;

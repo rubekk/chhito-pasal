@@ -4,12 +4,13 @@
     import { goto } from "$app/navigation";
     import { auth, db } from "$lib/firebaseConfig";
     import { onAuthStateChanged } from "firebase/auth";
-    import { doc, setDoc, onSnapshot } from "firebase/firestore";
+    import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
     import LocationPopup from "./LocationPopup.svelte";
     import Login from "./Login.svelte";
     import {
         authStore,
         storeLocation,
+        storeOpen,
         userLocation,
         hasPhone,
         cartProducts,
@@ -26,6 +27,7 @@
     let sHasPhone = false;
     let sCartProductsCount = 0;
     let sShowCart = false;
+    let sStoreOpen = true;
     let showLocationPopup = false;
     let showLoginPopup = false;
     let searchQuery = "";
@@ -33,6 +35,7 @@
     let phoneNumber = null;
     let showPhoneInputPopup = false;
     let newPhoneNumber = "";
+    let timeMessage = null;
 
     // store subscriptions
     authStore.subscribe((value) => {
@@ -47,6 +50,9 @@
         setTimeout(() => {
             showLocationPopup = sUserLocation.coords.length == 0;
         }, 500);
+    });
+    storeOpen.subscribe((value) => {
+        sStoreOpen = value;
     });
     hasPhone.subscribe((value) => {
         sHasPhone = value;
@@ -65,9 +71,9 @@
 
         const unsubscribe = onSnapshot(userDocRef, (userDoc) => {
             if (userDoc.exists() && userDoc.data().phoneNumber) {
-                phoneNumber = userDoc.data().phoneNumber; 
+                phoneNumber = userDoc.data().phoneNumber;
             } else {
-                phoneNumber = null; 
+                phoneNumber = null;
             }
         });
     };
@@ -124,6 +130,75 @@
         }
     };
 
+    const checkStoreStatus = () => {
+        const timeDocRef = doc(db, "time", "store");
+
+        onSnapshot(
+            timeDocRef,
+            (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const { openingTime, closingTime } = docSnapshot.data();
+
+                    const currentTime = new Date();
+                    const [openHour, openMinute] = openingTime
+                        .split(":")
+                        .map(Number);
+                    const [closeHour, closeMinute] = closingTime
+                        .split(":")
+                        .map(Number);
+
+                    const openTime = new Date();
+                    openTime.setHours(openHour, openMinute, 0);
+
+                    const closeTime = new Date();
+                    closeTime.setHours(closeHour, closeMinute, 0);
+
+                    const timeDiff =
+                        (closeTime - currentTime) / (1000 * 60 * 60);
+
+                    const formatTime = (time) => {
+                        const hours = time.getHours();
+                        const minutes = time
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0");
+                        const period = hours >= 12 ? "PM" : "AM";
+                        const displayHour = ((hours + 11) % 12) + 1;
+                        return `${displayHour}:${minutes} ${period}`;
+                    };
+
+                    let checkInterval = null;
+                    
+                    if (currentTime >= openTime && currentTime <= closeTime) {
+                        storeOpen.set(true);
+
+                        if (timeDiff <= 1) {
+                            timeMessage = `Closing at ${formatTime(closeTime)}`;
+
+                            checkInterval = setInterval(checkStoreStatus, 90000)
+                        } else {
+                            timeMessage = null;
+
+                            if (checkInterval) clearInterval(checkInterval);
+                        }
+                    } else {
+                        storeOpen.set(false);
+
+                        const isToday = currentTime < openTime;
+                        const dayMessage = isToday ? "today" : "tomorrow";
+
+                        timeMessage = `We are closed now. Opening at ${formatTime(openTime)} ${dayMessage}`;
+
+                        if (checkInterval) clearInterval(checkInterval);
+                    }
+                }
+            },
+            (error) => {
+                console.error("Error listening to store time updates:", error);
+            },
+        );
+    };
+
     onMount(async () => {
         if (browser) window.addEventListener("click", handleOutsideClick);
 
@@ -163,6 +238,8 @@
                 sAuthStore.user = null;
             }
         });
+
+        checkStoreStatus();
     });
 
     onDestroy(() => {
@@ -179,7 +256,11 @@
                 on:click={() => (showLocationPopup = true)}
             >
                 <div class="bold-delivery-location">
-                    Delivery in {sUserLocation.deliveryTime} minutes
+                    {#if !sStoreOpen && timeMessage}
+                        Delivery in - minutes
+                    {:else}
+                        Delivery in {sUserLocation.deliveryTime} minutes
+                    {/if}
                 </div>
                 <div class="header-location">
                     <div class="header-location-txt">{sUserLocation.place}</div>
@@ -256,6 +337,12 @@
         </div>
     </div>
 </div>
+
+{#if timeMessage}
+    <div class="store-messages">
+        <strong>!! {timeMessage} !!</strong>
+    </div>
+{/if}
 
 {#if showLocationPopup}
     <div
@@ -497,6 +584,13 @@
 
     .fa-phone {
         margin-right: 0.5rem;
+    }
+
+    .store-messages {
+        padding: 1rem 0;
+        text-align: center;
+        background-color: #fff;
+        color: #797979;
     }
 
     .popup-container input {
