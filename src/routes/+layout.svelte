@@ -64,6 +64,10 @@
     }
 </script>
 
+<svelte:head>
+    <title>ChhitoPasal - Groceries delivered in minutes</title>
+</svelte:head>
+
 {#if showWelcome}
     <Welcome />
 {:else if runTransition}

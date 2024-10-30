@@ -176,10 +176,6 @@
     });
 </script>
 
-<svelte:head>
-    <title>ChhitoPasal - Groceries delivered in minutes</title>
-</svelte:head>
-
 <div class="view-tihar-button-container">
     <button class="view-tihar-button" on:click={() => goto("/tihar")}
         >View Tihar Special Products</button
