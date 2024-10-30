@@ -25,6 +25,7 @@
     let showRightButtonEssentials = false;
     let loadingFeatured = true;
     let loadingEssentials = true;
+    let canvas;
 
     const getFeaturedProducts = async () => {
         loadingFeatured = true;
@@ -180,7 +181,9 @@
 </svelte:head>
 
 <div class="view-tihar-button-container">
-    <button class="view-tihar-button" on:click={() => goto("/tihar")}>View Tihar Special Products</button>
+    <button class="view-tihar-button" on:click={() => goto("/tihar")}
+        >View Tihar Special Products</button
+    >
 </div>
 
 <div class="products-wrapper">
@@ -344,7 +347,7 @@
 
     .view-tihar-button {
         position: relative;
-        z-index: 1; 
+        z-index: 1;
     }
 
     .products-wrapper,

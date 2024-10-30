@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import Product from "./../../components/Product.svelte";
-    import { productsData } from "$lib/store";
+    import { productsData, showCart, cartProducts } from "$lib/store";
     import { db } from "$lib/firebaseConfig";
     import {
         collection,
@@ -13,6 +13,12 @@
 
     let sFeaturedProductsData = [];
     let loadingFeatured = true;
+    let sCartProductsCount = 0;
+
+    cartProducts.subscribe((value) => {
+        sCartProductsCount = value.length;
+    });
+
 
     const getFeaturedProducts = async () => {
         loadingFeatured = true;
@@ -66,6 +72,13 @@
         {/if}
     </div>
 </section>
+
+<div class="page-cart" on:click={() => showCart.set(true)}>
+    <i class="fa-solid fa-cart-shopping"></i>
+    {#if sCartProductsCount > 0}
+        <span>{sCartProductsCount}</span>
+    {/if}
+</div>
 
 <style>
     .tihar-special {
@@ -136,12 +149,48 @@
         font-size: 1.25rem;
     }
 
+    .page-cart {
+        width: 55px;
+        height: 50px;
+        background-color: #fff;
+        border: 1px solid #dcdcdc;
+        border-radius: 7px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        z-index: 100;
+        background: linear-gradient(90deg, #a8e6cf, #dcedf7);
+        background-size: 400% 400%;
+        animation: gradient 7s ease infinite;
+        cursor: pointer;
+    }
+
+    .page-cart i {
+        font-size: 1.25rem;
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    .page-cart span {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--green);
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+
     /* media queries */
     @media (max-width: 1200px) {
         .tihar-special {
             margin: 0;
         }
         .back-btn {
+            display: flex;
+        }
+        .page-cart {
             display: flex;
         }
     }
