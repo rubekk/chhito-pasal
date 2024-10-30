@@ -3,8 +3,8 @@
     import Product from "./../../components/Product.svelte";
     import { onMount } from "svelte";
     import { showCart, productsData, cartProducts } from "$lib/store";
-    import { goto } from '$app/navigation';
-    import { page } from "$app/stores"; 
+    import { goto } from "$app/navigation";
+    import { page } from "$app/stores";
     import { db } from "$lib/firebaseConfig";
     import { collection, getDocs, onSnapshot } from "firebase/firestore";
 
@@ -13,7 +13,7 @@
     let filteredProducts = [];
     let sCartProductsCount = 0;
 
-    productsData.subscribe(value => {
+    productsData.subscribe((value) => {
         sProductsData = value;
     });
     cartProducts.subscribe((value) => {
@@ -66,30 +66,25 @@
         listenToProductChanges();
     });
 
-    // $: {
-    //     searchQuery = $page.url.searchParams.get("query") || "";
-        
-    //     if (sProductsData.length > 0) {
-    //         filteredProducts = sProductsData.filter(product => {
-    //             return product.productName.toLowerCase().includes(searchQuery.toLowerCase());
-    //         });
-    //     } else {
-    //         filteredProducts = [];
-    //     }
-    // }
     $: {
-    searchQuery = $page.url.searchParams.get("query") || "";
+        searchQuery = $page.url.searchParams.get("query") || "";
 
-    if (sProductsData.length > 0) {
-        filteredProducts = sProductsData.filter(product => {
-            const nameMatch = product.productName.toLowerCase().includes(searchQuery.toLowerCase());
-            const categoryMatch = product.category && product.category.toLowerCase().includes(searchQuery.toLowerCase());
-            return nameMatch || categoryMatch;
-        });
-    } else {
-        filteredProducts = [];
+        if (sProductsData.length > 0) {
+            filteredProducts = sProductsData.filter((product) => {
+                const nameMatch = product.productName
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+                const categoryMatch =
+                    product.category &&
+                    product.category
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase());
+                return nameMatch || categoryMatch;
+            });
+        } else {
+            filteredProducts = [];
+        }
     }
-}
 </script>
 
 <div class="search-container">
@@ -102,7 +97,7 @@
 
     <div class="products-container">
         {#each filteredProducts as productData}
-            <Product productData={productData} />
+            <Product {productData} />
         {/each}
     </div>
 
@@ -131,7 +126,7 @@
         align-items: center;
         padding: 1rem;
         border-bottom: 2px solid var(--blue);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .back-button {
@@ -210,14 +205,14 @@
             display: flex;
         }
     }
-    @media(max-width: 700px) {
+    @media (max-width: 700px) {
         .search-title {
             font-size: 1.1rem;
         }
     }
-    @media(max-width: 450px) {
+    @media (max-width: 450px) {
         .products-container {
-            padding: 2rem .5rem;
+            padding: 2rem 0.5rem;
             margin: auto;
             width: max-content;
         }

@@ -142,7 +142,7 @@
     .product {
         position: relative;
         width: 200px;
-        min-width: 175px;
+        min-width: 200px;
         background-color: #fff;
         border-radius: 8px; 
         border: 1px solid #dcdcdc;

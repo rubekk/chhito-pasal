@@ -322,11 +322,11 @@
     }
 
     .cart-product-img {
+        margin-right: 1rem;
         width: 70px;
         height: 70px;
         border-radius: 8px;
-        object-fit: cover;
-        margin-right: 1rem;
+        object-fit: contain;
     }
 
     .cart-product-details {
