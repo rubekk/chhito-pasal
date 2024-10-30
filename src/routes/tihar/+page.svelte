@@ -114,7 +114,7 @@
     .tihar-special::before,
     .tihar-special::after {
         content: "🌼 🌼 🌼 🌼 🌼 🌼 🌼 🌼 🌼 🌼 🌼";
-        margin: 1rem 0;
+        margin: 2rem 0 1rem;
         font-size: 1.2rem;
         color: #f4a261;
         display: block;
