@@ -9,6 +9,7 @@
         doc,
         getDoc
     } from "firebase/firestore";
+    import { goto } from "$app/navigation";
 
     let sFeaturedProductsData = [];
     let loadingFeatured = true;
@@ -46,6 +47,10 @@
 </script>
 
 <section class="tihar-special">
+    <div class="back-btn" on:click={() => goto("/")}>
+        <i class="fa-solid fa-arrow-left"></i>
+        Back
+    </div>
     <div class="content">
         <h3>🌼 Tihar Special Products 🌼</h3>
         <p class="subtitle">Celebrate with our special deals!</p>
@@ -70,7 +75,7 @@
         background: linear-gradient(145deg, #ffefc2, #fff3e0);
         text-align: center;
         color: #d14719; 
-        font-family: 'Poppins', sans-serif;
+        position: relative;
     }
 
     .content {
@@ -114,5 +119,30 @@
         color: #f4a261;
         display: block;
         text-align: center;
+    }
+
+    .back-btn {
+        font-size: 1.1rem;
+        display: none;
+        align-items: center;
+        position: absolute;
+        top: 1rem;
+        left: 2rem;
+        cursor: pointer;
+    }
+    
+    .back-btn i {
+        margin-right: 1rem;
+        font-size: 1.25rem;
+    }
+
+    /* media queries */
+    @media (max-width: 1200px) {
+        .tihar-special {
+            margin: 0;
+        }
+        .back-btn {
+            display: flex;
+        }
     }
 </style>
