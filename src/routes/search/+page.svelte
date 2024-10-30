@@ -66,17 +66,30 @@
         listenToProductChanges();
     });
 
-    $: {
-        searchQuery = $page.url.searchParams.get("query") || "";
+    // $: {
+    //     searchQuery = $page.url.searchParams.get("query") || "";
         
-        if (sProductsData.length > 0) {
-            filteredProducts = sProductsData.filter(product => {
-                return product.productName.toLowerCase().includes(searchQuery.toLowerCase());
-            });
-        } else {
-            filteredProducts = [];
-        }
+    //     if (sProductsData.length > 0) {
+    //         filteredProducts = sProductsData.filter(product => {
+    //             return product.productName.toLowerCase().includes(searchQuery.toLowerCase());
+    //         });
+    //     } else {
+    //         filteredProducts = [];
+    //     }
+    // }
+    $: {
+    searchQuery = $page.url.searchParams.get("query") || "";
+
+    if (sProductsData.length > 0) {
+        filteredProducts = sProductsData.filter(product => {
+            const nameMatch = product.productName.toLowerCase().includes(searchQuery.toLowerCase());
+            const categoryMatch = product.category && product.category.toLowerCase().includes(searchQuery.toLowerCase());
+            return nameMatch || categoryMatch;
+        });
+    } else {
+        filteredProducts = [];
     }
+}
 </script>
 
 <div class="search-container">

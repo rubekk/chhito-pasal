@@ -1,11 +1,12 @@
 <script>
+    import { onMount } from "svelte";
     import { cartProducts } from "$lib/store";
 
     export let productData = {
         productId: crypto.randomUUID(),
         productName: "Product name",
         price: 100,
-        discountedPrice: null, // Expecting discountedPrice from Firebase
+        discountedPrice: null, 
         stock: 0,
         imageUrl: "",
     };
@@ -13,19 +14,7 @@
     let sCartProducts = [];
     let productInCart = false;
     let cartProduct = null;
-
-    // Calculate discount percentage
     let discountPercentage = null;
-    if (
-        productData.discountedPrice &&
-        productData.price > productData.discountedPrice
-    ) {
-        discountPercentage = Math.round(
-            ((productData.price - productData.discountedPrice) /
-                productData.price) *
-                100,
-        );
-    }
 
     cartProducts.subscribe((value) => {
         sCartProducts = value;
@@ -34,6 +23,19 @@
         );
         productInCart = cartProduct;
     });
+
+    const calculateDiscountPercent = () => {
+        if (
+            productData.discountedPrice &&
+            productData.price > productData.discountedPrice
+        ) {
+            discountPercentage = Math.round(
+                ((productData.price - productData.discountedPrice) /
+                productData.price) *
+                100,
+            );
+        }
+    }
 
     const handleAddClick = () => {
         if (sCartProducts.some((product) => product.id === productData.id))
@@ -83,6 +85,10 @@
 
         cartProducts.set([...sCartProducts]);
     };
+
+    onMount(() => {
+        calculateDiscountPercent();
+    })
 </script>
 
 <div class="product">
@@ -135,15 +141,14 @@
 <style>
     .product {
         position: relative;
-        padding: 0.5rem 0.5rem;
         width: 200px;
-        min-width: 200px;
+        min-width: 175px;
         background-color: #fff;
         border-radius: 8px; 
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        box-shadow:
+        border: 1px solid #dcdcdc;
+        /* box-shadow:
             0 2px 4px rgba(0, 0, 0, 0.08),
-            0 1px 2px rgba(0, 0, 0, 0.05); 
+            0 1px 2px rgba(0, 0, 0, 0.05);  */
         transition: box-shadow 0.3s ease; 
     }
 
@@ -160,7 +165,7 @@
     }
 
     .product-img {
-        margin: auto;
+        margin: .5rem auto;
         width: 75%;
         height: 175px;
         display: flex;
@@ -169,8 +174,11 @@
 
     .product-text {
         margin-top: .5rem;
-        padding: 0 0.5rem;
+        padding: 0.5rem;
         font-size: 0.8rem;
+        background: #efef;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
     }
 
     .product-name {
@@ -190,7 +198,7 @@
     }
 
     .product-add-btn {
-        padding: 0.5rem 1rem;
+        padding: 0.25rem .75rem;
         color: #fff;
         background-color: var(--blue);
         border: 1px solid var(--blue);
@@ -237,7 +245,7 @@
         font-size: 0.9rem;
         font-weight: bold;
         font-style: italic;
-        color: #27ae60;
+        color: var(--green);
     }
 
     .original-price {
@@ -245,12 +253,6 @@
         font-size: 0.8rem;
         font-style: italic;
         color: #797979;
-    }
-
-    .normal-price {
-        font-size: 1rem;
-        font-weight: bold;
-        color: #333;
     }
 
     /* media queries */
