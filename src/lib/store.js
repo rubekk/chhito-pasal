@@ -25,39 +25,52 @@ export const productsData= writable([]);
 
 export const categories = [
     {
-        categoryName: "Rice, Pulses, Pitho and Oils",
-        breakdown: ["Rice", "Pulses", "Pitho", "Oils"],
-        slug: "rice-pulses-pitho-oils"
+        categoryName: "Cooking Essentials",
+        categorySubName: "Rice, Dal, Pitho and Oil",
+        breakdown: ["Rice", "Dal", "Pitho", "Oil"],
+        slug: "cooking-essentials"
     },
     {
-        categoryName: "Dairy, Eggs and Biscuits",
-        breakdown: ["Dairy", "Eggs", "Biscuits"],
-        slug: "dairy-eggs-biscuits"
+        categoryName: "Dairy & Essentials",
+        categorySubName: "Dairy, Eggs and Milk Supplements",
+        breakdown: ["Dairy", "Eggs", "Milk Supplements"],
+        slug: "dairy-and-essentials"
     },
     {
-        categoryName: "Juices and Cold Drinks",
-        breakdown: ["Juices", "Cold drinks", "Energy drinks"],
-        slug: "juices-cold-drinks"
+        categoryName: "Beverages",
+        categorySubName: "Juices, Cold Drinks and Energy Drinks",
+        breakdown: ["Juices", "Cold Drinks", "Energy Drinks"],
+        slug: "beverages"
     },
     {
-        categoryName: "Snacks, Chips and Noodles",
-        breakdown: ["Chips", "Noodles", "Cheese balls"],
-        slug: "snacks-chips-noodles"
+        categoryName: "Snacks",
+        categorySubName: "Chips, Noodles, Biscuits and Chocolates",
+        breakdown: ["Chips", "Noodles", "Biscuits", "Chocolates"],
+        slug: "snacks"
     },
     {
-        categoryName: "Soaps and Detergents",
-        breakdown: ["Bodycare Soaps", "Washing soaps", "Detergents", "Shampoo"],
-        slug: "soaps-detergents"
+        categoryName: "Household Essentials",
+        categorySubName: "Cleaning Supplies, Incense",
+        breakdown: ["Cleaning Supplies", "Incense"],
+        slug: "household-essentials"
     },
     {
-        categoryName: "Ciggarettes and Alcohol",
+        categoryName: "Personal Care",
+        categorySubName: "Soaps, Shampoos, Dental Care and Others",
+        breakdown: ["Soaps", "Shampoos", "Dental Care", "Additional Care"],
+        slug: "personal-care"
+    },
+    {
+        categoryName: "Chitto Bar",
+        categorySubName: "Ciggarettes and Alcohol",
         breakdown: ["Ciggarettes", "Beer", "Complementaries"],
-        slug: "ciggarettes-alcohol"
+        slug: "chitto-bar"
     },
     {
-        categoryName: "Masala",
-        breakdown: ["Masala powder", "Dana"],
-        slug: "masala"
+        categoryName: "Masala & Papad",
+        categorySubName: "Masala and Papad",
+        breakdown: ["Masala", "Papad", "Soups and Sauces"],
+        slug: "masala-and-papad"
     }
 ];
 
