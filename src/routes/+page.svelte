@@ -24,8 +24,7 @@
     let showLeftButtonEssentials = false;
     let showRightButtonEssentials = false;
     let loadingFeatured = true;
-    let loadingEssentials = true;
-    let canvas;
+    let loadingEssentials = true;           
 
     const getFeaturedProducts = async () => {
         loadingFeatured = true;
