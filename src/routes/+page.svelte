@@ -1,7 +1,6 @@
 <script>
     import "./app.css";
     import { onMount } from "svelte";
-    import { goto } from "$app/navigation";
     import Product from "../components/Product.svelte";
     import Category from "../components/Category.svelte";
     import { featuredProductsData, dailyEssentialsData, categories } from "$lib/store";
@@ -196,12 +195,6 @@
     });
 </script>
 
-<div class="view-tihar-button-container">
-    <button class="view-tihar-button" on:click={() => goto("/tihar")}
-        >View Tihar Special Products</button
-    >
-</div>
-
 <div class="products-wrapper">
     <h3>Featured Products</h3>
     {#if loadingFeatured}
@@ -282,90 +275,6 @@
 </div>
 
 <style>
-    .view-tihar-button-container {
-        display: flex;
-        justify-content: center;
-        margin: 2rem 0 0;
-    }
-
-    .view-tihar-button {
-        background-color: #d14719;
-        color: #fff;
-        font-size: 1rem;
-        font-weight: bold;
-        padding: 1rem 1.5rem;
-        border: 3px solid transparent;
-        border-radius: 8px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        transition:
-            color 0.3s,
-            border-color 0.3s;
-    }
-
-    .view-tihar-button::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: 8px;
-        border: 5px solid;
-        border-image: linear-gradient(45deg, #ff6b6b, #ffd93d, #ff6b6b) 1;
-        animation: border-animation 1.5s linear infinite;
-        z-index: 0;
-    }
-
-    @keyframes border-animation {
-        0% {
-            border-image-source: linear-gradient(
-                45deg,
-                #ff6b6b,
-                #ffd93d,
-                #ff6b6b
-            );
-        }
-        25% {
-            border-image-source: linear-gradient(
-                45deg,
-                #ffd93d,
-                #ff6b6b,
-                #ffd93d
-            );
-        }
-        50% {
-            border-image-source: linear-gradient(
-                45deg,
-                #ff6b6b,
-                #ffd93d,
-                #ff6b6b
-            );
-        }
-        75% {
-            border-image-source: linear-gradient(
-                45deg,
-                #ffd93d,
-                #ff6b6b,
-                #ffd93d
-            );
-        }
-        100% {
-            border-image-source: linear-gradient(
-                45deg,
-                #ff6b6b,
-                #ffd93d,
-                #ff6b6b
-            );
-        }
-    }
-
-    .view-tihar-button {
-        position: relative;
-        z-index: 1;
-    }
-
     .products-wrapper,
     .daily-essentials-wrapper {
         padding: 2rem 0;
