@@ -1,7 +1,7 @@
 <script>
   import { tick } from "svelte";
   import { goto } from "$app/navigation";
-  import { showCart, cartProducts } from "$lib/store";
+  import { categoriesData, showCart, cartProducts } from "$lib/store";
   import { collection, query, where, getDocs } from "firebase/firestore";
   import { db } from "$lib/firebaseConfig";
   import Product from "../../../components/Product.svelte";
@@ -10,17 +10,25 @@
 
   const categoryData = data.data;
   let subCategory = categoryData.breakdown[0];
+  let sCategoriesData = [];
   let sProductsData = [];
   let sCartProductsCount = 0;
   let breakdownsContainer;
   let showLeftButton = false;
   let showRightButton = false;
 
+  categoriesData.subscribe(value => {
+    sCategoriesData = value;
+  })
   cartProducts.subscribe((value) => {
     sCartProductsCount = value.length;
   });
 
-  async function fetchProductsByCategory(category) {
+  async function fetchProductsByCategory(category) { 
+    let currentCategory = sCategoriesData.find(obj => obj.hasOwnProperty(category));
+
+    if(currentCategory && currentCategory[category].length > 0) return currentCategory[category];
+
     try {
       const products = [];
 
@@ -33,6 +41,9 @@
       querySnapshot.forEach((doc) => {
         products.push({ id: doc.id, ...doc.data() });
       });
+
+      sCategoriesData.push({ [category]: products })
+      categoriesData.set([...sCategoriesData]);
 
       return products;
     } catch (error) {

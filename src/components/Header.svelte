@@ -14,7 +14,7 @@
         userLocation,
         hasPhone,
         cartProducts,
-        showCart,
+        showCart
     } from "$lib/store";
     import { getPlaceName, getTravelDetails } from "$lib/utils";
 
@@ -132,7 +132,7 @@
 
     const checkStoreStatus = () => {
         const timeDocRef = doc(db, "time", "store");
-
+        
         onSnapshot(
             timeDocRef,
             (docSnapshot) => {

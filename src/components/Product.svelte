@@ -88,8 +88,6 @@
 
     onMount(() => {
         calculateDiscountPercent();
-
-        console.log(productData)
     })
 </script>
 
@@ -97,12 +95,7 @@
     {#if discountPercentage}
         <div class="discount-badge">{discountPercentage}% OFF</div>
     {/if}
-    <!-- <img
-        class="product-img"
-        src={productData.imageUrl}
-        alt={productData.productName}
-    /> -->
-    <img class="product-img" src={`/products/${productData.imageUrl}.jpg`} alt="">
+    <img class="product-img" src={`/products/${productData.imageUrl}.jpg`} alt={productData.productName}>
     <div class="product-text">
         <div class="product-name">{productData.productName}</div>
         <div class="product-text-below">

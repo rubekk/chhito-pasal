@@ -2,25 +2,31 @@
     import "./../app.css";
     import Product from "./../../components/Product.svelte";
     import { onMount } from "svelte";
-    import { showCart, productsData, cartProducts } from "$lib/store";
+    import { productsData, showCart, cartProducts } from "$lib/store";
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
     import { db } from "$lib/firebaseConfig";
-    import { collection, getDocs, onSnapshot } from "firebase/firestore";
+    import {
+        collection,
+        getDocs,
+        onSnapshot
+    } from "firebase/firestore";
 
     let sProductsData = [];
     let searchQuery = "";
     let filteredProducts = [];
     let sCartProductsCount = 0;
 
-    productsData.subscribe((value) => {
-        sProductsData = value;
-    });
+    productsData.subscribe(value => {
+        sProductsData = value
+    })
     cartProducts.subscribe((value) => {
         sCartProductsCount = value.length;
     });
 
     const getAllProducts = async () => {
+        if(sProductsData.length > 10) return;
+        
         try {
             const querySnapshot = await getDocs(collection(db, "products"));
             sProductsData = querySnapshot.docs.map((doc) => ({
@@ -28,7 +34,7 @@
                 ...doc.data(),
             }));
 
-            productsData.set(sProductsData);
+            productsData.set([...sProductsData]);
         } catch (error) {
             console.error("Error fetching products:", error);
         }
@@ -53,11 +59,11 @@
                             price: updatedData.price,
                             discountedPrice: updatedData.discountedPrice,
                         };
-
-                        productsData.set([...sProductsData]);
                     }
                 }
             });
+
+            productsData.set([...sProductsData]);
         });
     };
 

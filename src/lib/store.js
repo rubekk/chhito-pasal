@@ -23,6 +23,12 @@ export const hasPhone = writable(false);
 
 export const productsData= writable([]);
 
+export const featuredProductsData = writable([]);
+
+export const dailyEssentialsData = writable([]);
+
+export const categoriesData = writable([]);
+
 export const categories = [
     {
         categoryName: "Cooking Essentials",

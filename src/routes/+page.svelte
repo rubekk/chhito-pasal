@@ -4,7 +4,7 @@
     import { goto } from "$app/navigation";
     import Product from "../components/Product.svelte";
     import Category from "../components/Category.svelte";
-    import { productsData, categories } from "$lib/store";
+    import { featuredProductsData, dailyEssentialsData, categories } from "$lib/store";
     import { db } from "$lib/firebaseConfig";
     import {
         collection,
@@ -24,9 +24,21 @@
     let showLeftButtonEssentials = false;
     let showRightButtonEssentials = false;
     let loadingFeatured = true;
-    let loadingEssentials = true;           
+    let loadingEssentials = true;  
+
+    featuredProductsData.subscribe(value => {
+        sFeaturedProductsData = value
+    })
+    dailyEssentialsData.subscribe(value => {
+        sDailyEssentialsData = value
+    })
 
     const getFeaturedProducts = async () => {
+        if(sFeaturedProductsData.length === 7) {
+            loadingFeatured = false;
+            return;
+        }
+
         loadingFeatured = true;
         try {
             const featuredProductsSnapshot = await getDocs(
@@ -45,7 +57,7 @@
                 .filter((doc) => doc.exists())
                 .map((doc) => ({ id: doc.id, ...doc.data() }));
 
-            productsData.set(sFeaturedProductsData);
+            featuredProductsData.set([...sFeaturedProductsData]);
         } catch (error) {
             console.error("Error fetching featured products:", error);
         } finally {
@@ -54,6 +66,11 @@
     };
 
     const getDailyEssentials = async () => {
+        if(sDailyEssentialsData.length === 7) {
+            loadingEssentials = false;
+            return;
+        }
+
         loadingEssentials = true;
         try {
             const dailyEssentialsSnapshot = await getDocs(
@@ -71,6 +88,8 @@
             sDailyEssentialsData = productDocs
                 .filter((doc) => doc.exists())
                 .map((doc) => ({ id: doc.id, ...doc.data() }));
+
+            dailyEssentialsData.set([...sDailyEssentialsData]);
         } catch (error) {
             console.error("Error fetching daily essentials:", error);
         } finally {
@@ -94,7 +113,7 @@
                 .filter((doc) => doc.exists())
                 .map((doc) => ({ id: doc.id, ...doc.data() }));
 
-            productsData.set(sFeaturedProductsData);
+            featuredProductsData.set([...sFeaturedProductsData]);
         });
     };
 
@@ -113,6 +132,8 @@
             sDailyEssentialsData = productDocs
                 .filter((doc) => doc.exists())
                 .map((doc) => ({ id: doc.id, ...doc.data() }));
+
+            dailyEssentialsData.set([...sDailyEssentialsData]);
         });
     };
 

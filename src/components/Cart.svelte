@@ -199,7 +199,7 @@
                 <div class="cart-product">
                     <img
                         class="cart-product-img"
-                        src={cartProduct.imageUrl}
+                        src={`/products/${cartProduct.imageUrl}.jpg`}
                         alt=""
                     />
                     <div class="cart-product-details">
