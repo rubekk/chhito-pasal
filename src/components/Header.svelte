@@ -475,6 +475,10 @@
         cursor: pointer;
     }
 
+    .header-right {
+        position: relative;
+    }
+
     .header-login,
     .header-user {
         padding: 0.5rem 1rem;
@@ -507,9 +511,10 @@
     }
 
     .dropdown {
+        width: max-content;
         position: absolute;
-        top: 60px;
-        right: 20px;
+        top: 35px;
+        right: 3.25rem;
         background-color: white;
         border: 1px solid #dcdcdc;
         border-radius: 3px;
@@ -618,13 +623,14 @@
         .header-right {
             gap: 1rem;
         }
-    }
-    @media (max-width: 1160px) {
         .header-search input {
             width: 400px;
         }
+        .dropdown {
+            right: 2.25rem;
+        }
     }
-    @media (max-width: 1050px) {
+    @media (max-width: 1075px) {
         .header-left h1 {
             display: none;
         }
@@ -651,6 +657,9 @@
         .header-cart span {
             top: 5px;
             right: 5px;
+        }
+        .dropdown {
+            right: 0;
         }
 
         @keyframes gradient {
@@ -690,8 +699,8 @@
             width: 100%;
         }
         .dropdown {
-            top: 62px;
-            right: 15px;
+            top: 35px;
+            right: 0px;
         }
     }
     @media (max-width: 450px) {

@@ -122,16 +122,15 @@
 <style>
     .search-container {
         width: 100%;
-        background-color: #fff;
-        border: 1px solid #cecece;
-        border-top: none;
+        /* background-color: #fff; */
+        /* border: 1px solid #cecece; */
     }
 
     .search-info {
         display: flex;
         align-items: center;
         padding: 1rem;
-        border-bottom: 2px solid var(--blue);
+        border: 1px solid var(--green);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
@@ -159,7 +158,7 @@
         padding: 2rem 1rem;
         margin: auto;
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         flex-wrap: wrap;
         gap: 0.75rem;

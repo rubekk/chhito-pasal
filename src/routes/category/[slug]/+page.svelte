@@ -141,8 +141,8 @@
 <style>
   .category-container {
     width: 100%;
-    background-color: #fff;
-    border: 1px solid #cecece;
+    /* background-color: #fff; */
+    /* border: 1px solid #cecece; */
     border-top: none;
   }
 
@@ -159,7 +159,9 @@
   .breakdowns-container {
     padding: 1rem;
     height: 75px;
-    border-bottom: 2px solid var(--blue);
+    background-color: #fff;
+    /* border-bottom: 2px solid var(--blue); */
+    border: 1px solid var(--green);
     display: flex;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

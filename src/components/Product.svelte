@@ -167,9 +167,10 @@
 
     .product-text {
         margin-top: .5rem;
-        padding: 0.5rem;
+        padding: 1rem 0.5rem 0.5rem .75rem;
         font-size: 0.8rem;
-        background: #efef;
+        background: #d7ffd7;
+        border: 4px solid #fff;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
     }
@@ -192,11 +193,17 @@
 
     .product-add-btn {
         padding: 0.25rem .75rem;
-        color: #fff;
-        background-color: var(--blue);
+        font-size: .8rem;
+        color: #000;
+        background-color: #fff;
         border: 1px solid var(--blue);
         border-radius: 3px;
         cursor: pointer;
+    }
+
+    .product-add-btn:hover {
+        color: #fff;
+        background-color: var(--blue);
     }
 
     .out-stock-txt {
@@ -238,7 +245,7 @@
         font-size: 0.9rem;
         font-weight: bold;
         font-style: italic;
-        color: var(--green);
+        /* color: var(--green); */
     }
 
     .original-price {
