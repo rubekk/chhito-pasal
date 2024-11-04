@@ -143,11 +143,10 @@
     width: 100%;
     /* background-color: #fff; */
     /* border: 1px solid #cecece; */
-    border-top: none;
   }
 
   .products-container {
-    padding: 2rem 1rem;
+    padding: 2rem 0;
     margin: auto;
     display: flex;
     justify-content: center;
@@ -162,6 +161,7 @@
     background-color: #fff;
     /* border-bottom: 2px solid var(--blue); */
     border: 1px solid var(--green);
+    border-radius: 5px;
     display: flex;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

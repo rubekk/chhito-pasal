@@ -131,6 +131,7 @@
         align-items: center;
         padding: 1rem;
         border: 1px solid var(--green);
+        border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
@@ -155,7 +156,7 @@
     }
 
     .products-container {
-        padding: 2rem 1rem;
+        padding: 2rem 0;
         margin: auto;
         display: flex;
         justify-content: center;

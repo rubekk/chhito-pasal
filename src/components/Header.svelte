@@ -592,6 +592,7 @@
     }
 
     .store-messages {
+        margin-bottom: 1rem;
         padding: 1rem 0;
         text-align: center;
         color: #797979;
