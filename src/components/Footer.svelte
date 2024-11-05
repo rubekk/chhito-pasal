@@ -1,6 +1,6 @@
 <script>
     const email = "chittopasal@gmail.com";
-    const phoneNumber = "+977 9828294632";
+    const phoneNumber = "+977 9745706122";
 </script>
 
 <footer class="footer">
