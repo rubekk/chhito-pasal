@@ -240,6 +240,10 @@
         position: relative;
     }
 
+    .products-wrapper {
+        padding: 0 0 1rem 0;
+    }
+
     .products-wrapper h3,
     .categories-wrapper h3,
     .daily-essentials-wrapper h3 {
@@ -294,6 +298,9 @@
         .categories-wrapper,
         .daily-essentials-wrapper {
             padding: 1rem .5rem;
+        }
+        .products-wrapper {
+            padding: 0 .5rem 1rem;
         }
         .categories-container {
             justify-content: center;

@@ -20,6 +20,7 @@
 <style>
     .footer {
         padding: 3rem 0 1rem;
+        background: #fff;
     }
 
     .footer-content {

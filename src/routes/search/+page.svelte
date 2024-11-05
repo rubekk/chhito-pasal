@@ -96,9 +96,14 @@
         display: flex;
         align-items: center;
         padding: 1rem;
+        background-color: #fff;
         border: 1px solid var(--green);
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-title {
+        font-size: 1rem;
     }
 
     .back-button {
@@ -116,7 +121,7 @@
     }
 
     .search-title {
-        font-size: 1.25rem;
+        font-size: 1rem;
         color: var(--blue);
         margin-left: 1rem;
     }
@@ -180,18 +185,6 @@
     @media (max-width: 800px) {
         .products-container {
             padding: 1rem 0.5rem;
-        }
-    }
-    @media (max-width: 700px) {
-        .search-title {
-            font-size: 1.1rem;
-        }
-    }
-    @media (max-width: 450px) {
-        .products-container {
-            padding: 2rem 0.5rem;
-            margin: auto;
-            width: max-content;
         }
     }
 </style>

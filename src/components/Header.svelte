@@ -37,6 +37,16 @@
     let newPhoneNumber = "";
     let timeMessage = null;
 
+    let searchHolders = ["rice", "egg", "chips", "biscuits", "masala", "everything"];
+    let i = 0;
+    let searchHolder = searchHolders[i];
+
+    setInterval(() => {
+        searchHolder = searchHolders[i];
+        i++;
+        i = i>5 ? 0 : i;
+    }, 2500);
+
     // store subscriptions
     authStore.subscribe((value) => {
         sAuthStore = value;
@@ -281,7 +291,7 @@
         <div class="header-search">
             <input
                 type="text"
-                placeholder="Search 'egg' 'rice'"
+                placeholder={`Search ${searchHolder}`}
                 bind:value={searchQuery}
                 on:keydown={handleKeydown}
             />
@@ -590,7 +600,6 @@
     }
 
     .store-messages {
-        margin-bottom: 1rem;
         padding: 1rem 0;
         text-align: center;
         color: #797979;

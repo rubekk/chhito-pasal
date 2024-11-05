@@ -17,17 +17,20 @@
   let showLeftButton = false;
   let showRightButton = false;
 
-  categoriesData.subscribe(value => {
+  categoriesData.subscribe((value) => {
     sCategoriesData = value;
-  })
+  });
   cartProducts.subscribe((value) => {
     sCartProductsCount = value.length;
   });
 
-  async function fetchProductsByCategory(category) { 
-    let currentCategory = sCategoriesData.find(obj => obj.hasOwnProperty(category));
+  async function fetchProductsByCategory(category) {
+    let currentCategory = sCategoriesData.find((obj) =>
+      obj.hasOwnProperty(category),
+    );
 
-    if(currentCategory && currentCategory[category].length > 0) return currentCategory[category];
+    if (currentCategory && currentCategory[category].length > 0)
+      return currentCategory[category];
 
     try {
       const products = [];
@@ -42,7 +45,7 @@
         products.push({ id: doc.id, ...doc.data() });
       });
 
-      sCategoriesData.push({ [category]: products })
+      sCategoriesData.push({ [category]: products });
       categoriesData.set([...sCategoriesData]);
 
       return products;
@@ -107,10 +110,14 @@
             on:click={() => chooseSubCategory(breakdown)}
             class={breakdown == subCategory
               ? "breakdown-item active"
-              : "breakdown-item"}>
-              <img src={`/products/${categoryData.breakdownImages[index]}.jpg`} alt="">
-              {breakdown}
-            </span>
+              : "breakdown-item"}
+          >
+            <img
+              src={`/products/${categoryData.breakdownImages[index]}.jpg`}
+              alt=""
+            />
+            {breakdown}
+          </span>
         {/each}
       </div>
       {#if showLeftButton}
@@ -159,7 +166,6 @@
     padding: 1rem;
     height: 75px;
     background-color: #fff;
-    /* border-bottom: 2px solid var(--blue); */
     border: 1px solid var(--green);
     border-radius: 5px;
     display: flex;
@@ -179,6 +185,10 @@
     justify-content: flex-start;
     align-items: center;
     color: var(--blue);
+  }
+
+  .title h3 {
+    font-size: 1rem;
   }
 
   .vertical-line {
@@ -203,13 +213,13 @@
   .breakdowns .breakdown-item {
     padding: 0.5rem;
     margin: 0 0.5rem;
-    font-size: .9rem;
+    font-size: 0.9rem;
     border: 2px solid var(--green);
     border-radius: 15px;
     white-space: nowrap;
     display: flex;
     align-items: center;
-    gap: .25rem;
+    gap: 0.25rem;
     transition:
       background-color 0.3s ease,
       transform 0.3s ease;
@@ -224,8 +234,8 @@
 
   .breakdowns .active,
   .breakdown-item:hover {
-    transition: .2s;
-    border: 2px solid var(--blue)
+    transition: 0.2s;
+    border: 2px solid var(--blue);
   }
 
   .scroll-button {
@@ -291,18 +301,17 @@
   }
   @media (max-width: 800px) {
     .products-container {
-      padding: 1rem .5rem;
+      padding: 1rem 0.5rem;
     }
   }
   @media (max-width: 900px) {
     .breakdowns-container {
-      height: 150px;
+      height: 135px;
       align-items: flex-start;
       justify-content: space-between;
       flex-direction: column;
     }
     .title {
-      font-size: 1.1rem;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;

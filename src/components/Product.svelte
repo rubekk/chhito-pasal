@@ -140,10 +140,10 @@
         position: relative;
         width: 200px;
         min-width: 200px;
-        max-width: 300px;
+        max-width: 250px;
         background-color: #fff;
         border-radius: 8px; 
-        border: 1px solid #dcdcdc;
+        border: 1px solid #ffeded;
         transition: box-shadow 0.3s ease; 
         flex-grow: 1;
     }
@@ -256,5 +256,23 @@
         font-size: 0.8rem;
         font-style: italic;
         color: #797979;
+    }
+
+    @media (max-width: 430px) {
+        .product {
+            width: 175px;
+            min-width: 175px;
+            max-width: 175px;
+        }
+    }
+    @media (max-width: 385px) {
+        .product {
+            width: 160px;
+            min-width: 160px;
+            max-width: 160px;
+        }
+        .discounted-price {
+            font-size: .7rem;
+        }
     }
 </style>
