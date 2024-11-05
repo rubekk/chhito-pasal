@@ -306,10 +306,14 @@
   }
   @media (max-width: 900px) {
     .breakdowns-container {
+      position: sticky;
+      top: 0;
+      left: 0;
       height: 135px;
       align-items: flex-start;
       justify-content: space-between;
       flex-direction: column;
+      z-index: 100;
     }
     .title {
       overflow: hidden;
