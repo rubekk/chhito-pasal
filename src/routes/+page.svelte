@@ -233,8 +233,9 @@
 
 <style>
     .products-wrapper,
-    .daily-essentials-wrapper {
-        padding: 2rem 0;
+    .daily-essentials-wrapper,
+    .categories-wrapper {
+        padding: 1rem 0;
         width: 100%;
         position: relative;
     }
@@ -242,7 +243,7 @@
     .products-wrapper h3,
     .categories-wrapper h3,
     .daily-essentials-wrapper h3 {
-        margin: 0 0 1rem 0.5rem;
+        margin: 0 0 .5rem 0.5rem;
     }
 
     .products-container,
@@ -258,9 +259,6 @@
         scrollbar-width: none;
     }
 
-    .categories-wrapper {
-        padding: 2rem 0;
-    }
     .categories-container {
         flex-wrap: wrap;
     }
@@ -295,7 +293,7 @@
         .products-wrapper,
         .categories-wrapper,
         .daily-essentials-wrapper {
-            padding: 2rem 1rem;
+            padding: 1rem .5rem;
         }
         .categories-container {
             justify-content: center;

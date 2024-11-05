@@ -6,26 +6,23 @@
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
     import { db } from "$lib/firebaseConfig";
-    import {
-        collection,
-        getDocs
-    } from "firebase/firestore";
+    import { collection, getDocs } from "firebase/firestore";
 
     let sProductsData = [];
     let searchQuery = "";
     let filteredProducts = [];
     let sCartProductsCount = 0;
 
-    productsData.subscribe(value => {
-        sProductsData = value
-    })
+    productsData.subscribe((value) => {
+        sProductsData = value;
+    });
     cartProducts.subscribe((value) => {
         sCartProductsCount = value.length;
     });
 
     const getAllProducts = async () => {
-        if(sProductsData.length > 10) return;
-        
+        if (sProductsData.length > 10) return;
+
         try {
             const querySnapshot = await getDocs(collection(db, "products"));
             sProductsData = querySnapshot.docs.map((doc) => ({
@@ -93,8 +90,6 @@
 <style>
     .search-container {
         width: 100%;
-        /* background-color: #fff; */
-        /* border: 1px solid #cecece; */
     }
 
     .search-info {
@@ -127,7 +122,7 @@
     }
 
     .products-container {
-        padding: 2rem 0;
+        padding: 1rem 0;
         margin: auto;
         display: flex;
         justify-content: center;
@@ -180,6 +175,11 @@
     @media (max-width: 1200px) {
         .page-cart {
             display: flex;
+        }
+    }
+    @media (max-width: 800px) {
+        .products-container {
+            padding: 1rem 0.5rem;
         }
     }
     @media (max-width: 700px) {

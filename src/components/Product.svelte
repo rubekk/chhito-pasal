@@ -140,10 +140,12 @@
         position: relative;
         width: 200px;
         min-width: 200px;
+        max-width: 300px;
         background-color: #fff;
         border-radius: 8px; 
         border: 1px solid #dcdcdc;
         transition: box-shadow 0.3s ease; 
+        flex-grow: 1;
     }
 
     .discount-badge {
@@ -172,6 +174,7 @@
         font-size: 0.8rem;
         background: #d7ffd7;
         border: 4px solid #fff;
+        border-bottom: none;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
     }
@@ -246,7 +249,6 @@
         font-size: 0.9rem;
         font-weight: bold;
         font-style: italic;
-        /* color: var(--green); */
     }
 
     .original-price {
@@ -254,19 +256,5 @@
         font-size: 0.8rem;
         font-style: italic;
         color: #797979;
-    }
-
-    /* media queries */
-    @media(max-width: 700px) {
-       .product {
-            width: 175px;
-            min-width: 175px;
-       } 
-    }
-    @media(max-width: 400px) {
-        .product {
-            width: 160px;
-            min-width: 160px;
-        }
     }
 </style>

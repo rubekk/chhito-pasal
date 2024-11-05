@@ -411,7 +411,7 @@
         padding: 0.5rem;
         font-weight: bold;
         background-color: #ecfbff;
-        border: 1px solid #dcdcdc;
+        border: 2px solid var(--blue);
         border-radius: 7px;
         cursor: pointer;
     }
@@ -444,9 +444,8 @@
         height: 45px;
         font-weight: bold;
         background-color: #f1fdff;
-        border: 1px solid #dcdcdc;
-        border-right: none;
-        border-radius: 3px;
+        border: none;
+        border-radius: 7px;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
         outline: none;
@@ -464,9 +463,8 @@
         height: 45px;
         color: #888;
         background-color: #f1fdff;
-        border: 1px solid #dcdcdc;
-        border-left: none;
-        border-radius: 3px;
+        border: none;
+        border-radius: 7px;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         display: flex;

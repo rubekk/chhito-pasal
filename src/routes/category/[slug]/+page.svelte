@@ -102,13 +102,15 @@
         bind:this={breakdownsContainer}
         on:scroll={checkScrollButtons}
       >
-        {#each categoryData.breakdown as breakdown}
+        {#each categoryData.breakdown as breakdown, index}
           <span
             on:click={() => chooseSubCategory(breakdown)}
             class={breakdown == subCategory
               ? "breakdown-item active"
-              : "breakdown-item"}>{breakdown}</span
-          >
+              : "breakdown-item"}>
+              <img src={`/products/${categoryData.breakdownImages[index]}.jpg`} alt="">
+              {breakdown}
+            </span>
         {/each}
       </div>
       {#if showLeftButton}
@@ -141,12 +143,10 @@
 <style>
   .category-container {
     width: 100%;
-    /* background-color: #fff; */
-    /* border: 1px solid #cecece; */
   }
 
   .products-container {
-    padding: 2rem 0;
+    padding: 1rem 0;
     margin: auto;
     display: flex;
     justify-content: center;
@@ -174,7 +174,7 @@
   }
 
   .title {
-    font-size: 1.25rem;
+    font-size: 1rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -201,27 +201,31 @@
   }
 
   .breakdowns .breakdown-item {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     margin: 0 0.5rem;
-    border: 1px solid var(--green);
+    font-size: .9rem;
+    border: 2px solid var(--green);
     border-radius: 15px;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: .25rem;
     transition:
       background-color 0.3s ease,
       transform 0.3s ease;
     cursor: pointer;
   }
 
-  .breakdowns .active,
-  .breakdown-item:hover {
-    color: #fff;
-    background-color: var(--blue);
+  .breakdown-item img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
   }
 
+  .breakdowns .active,
   .breakdown-item:hover {
-    color: #fff;
-    background-color: var(--blue);
-    transform: scale(1.05);
+    transition: .2s;
+    border: 2px solid var(--blue)
   }
 
   .scroll-button {
@@ -283,6 +287,11 @@
   @media (max-width: 1200px) {
     .page-cart {
       display: flex;
+    }
+  }
+  @media (max-width: 800px) {
+    .products-container {
+      padding: 1rem .5rem;
     }
   }
   @media (max-width: 900px) {

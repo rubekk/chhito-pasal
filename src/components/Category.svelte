@@ -22,6 +22,7 @@
     .category {
         padding: 1rem;
         width: 150px;
+        max-width: 275px;
         height: 150px;
         color: #fff;
         background: linear-gradient(135deg, var(--green) 30%, #4CAF50 90%); 
@@ -36,6 +37,7 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
         cursor: pointer;
         transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        flex-grow: 1;
     }
 
     .category-content {

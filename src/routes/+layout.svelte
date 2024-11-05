@@ -103,6 +103,9 @@
 {/if}
 
 <style>
+    .header-layout {
+        margin-bottom: 1rem;
+    }
     .location-popup-container {
         position: absolute;
         top: 5rem;
