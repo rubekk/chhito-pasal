@@ -9,8 +9,7 @@
         collection,
         getDocs,
         doc,
-        getDoc,
-        onSnapshot,
+        getDoc
     } from "firebase/firestore";
     import Footer from "../components/Footer.svelte";
 
@@ -96,46 +95,6 @@
         }
     };
 
-    const listenToFeaturedProductChanges = () => {
-        const featuredProductsRef = collection(db, "featuredProducts");
-
-        onSnapshot(featuredProductsRef, async (querySnapshot) => {
-            const featuredProductIds = querySnapshot.docs.map(
-                (doc) => doc.data().productId,
-            );
-            const productPromises = featuredProductIds.map((id) =>
-                getDoc(doc(db, "products", id)),
-            );
-            const productDocs = await Promise.all(productPromises);
-
-            sFeaturedProductsData = productDocs
-                .filter((doc) => doc.exists())
-                .map((doc) => ({ id: doc.id, ...doc.data() }));
-
-            featuredProductsData.set([...sFeaturedProductsData]);
-        });
-    };
-
-    const listenToDailyEssentialsChanges = () => {
-        const dailyEssentialsRef = collection(db, "dailyEssentials");
-
-        onSnapshot(dailyEssentialsRef, async (querySnapshot) => {
-            const dailyEssentialProductIds = querySnapshot.docs.map(
-                (doc) => doc.data().productId,
-            );
-            const productPromises = dailyEssentialProductIds.map((id) =>
-                getDoc(doc(db, "products", id)),
-            );
-            const productDocs = await Promise.all(productPromises);
-
-            sDailyEssentialsData = productDocs
-                .filter((doc) => doc.exists())
-                .map((doc) => ({ id: doc.id, ...doc.data() }));
-
-            dailyEssentialsData.set([...sDailyEssentialsData]);
-        });
-    };
-
     const checkScrollButtons = () => {
         if (productsContainer) {
             showLeftButtonFeatured = productsContainer.scrollLeft > 0;
@@ -189,8 +148,6 @@
     onMount(() => {
         getFeaturedProducts();
         getDailyEssentials();
-        listenToFeaturedProductChanges();
-        listenToDailyEssentialsChanges();
         checkScrollButtons();
     });
 </script>

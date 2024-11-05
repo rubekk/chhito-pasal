@@ -1,5 +1,5 @@
 <script>
-    import { authStore, userLocation, storeOpen, productsData, featuredProductsData, dailyEssentialsData, cartProducts, showCart } from "$lib/store";
+    import { authStore, userLocation, storeOpen, productsData, featuredProductsData, dailyEssentialsData, categoriesData, cartProducts, showCart } from "$lib/store";
     import { db } from "$lib/firebaseConfig";
     import { collection, addDoc } from "firebase/firestore";
     import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -18,6 +18,7 @@
     let sProductsData = [];
     let sFeaturedProductsData = [];
     let sDailyEssentialsData = [];
+    let sCategoriesData = [];
     let sCartProducts = [];
     let totalPrice = 0;
     let totalSavings = 0;
@@ -40,6 +41,9 @@
     })
     dailyEssentialsData.subscribe(value => {
         sDailyEssentialsData = value
+    })
+    categoriesData.subscribe(value => {
+        sCategoriesData = value
     })
     cartProducts.subscribe((value) => {
         sCartProducts = value;
@@ -138,6 +142,7 @@
                     updateProducts(sCartProducts[index].id, productData);
                     updateFeaturedProducts(sCartProducts[index].id, productData);
                     updateDailyEssentials(sCartProducts[index].id, productData);
+                    updateCategories(sCartProducts[index], productData);
 
                     if(sCartProducts[index].count <= 0) sCartProducts.splice(index, 1);
                     else {  
@@ -241,6 +246,19 @@
 
         sDailyEssentialsData[dIndex] = orderedProduct;
         dailyEssentialsData.set(sDailyEssentialsData);
+    }
+
+    const updateCategories = (oId, orderedProduct) => {
+        let cIndex = sCategoriesData.findIndex(item => Object.keys(item) == orderedProduct.category);
+
+        if(cIndex < 0) return;
+
+        let ccIndex = sCategoriesData[cIndex][orderedProduct.category].findIndex(item => item.id == oId);
+
+        if(ccIndex < 0) return;
+
+        sCategoriesData[cIndex][orderedProduct.category][ccIndex] = orderedProduct;
+        categoriesData.set(sCategoriesData);
     }
 
     $: if (sCartProducts) handleTotalPrice();

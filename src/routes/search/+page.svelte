@@ -8,8 +8,7 @@
     import { db } from "$lib/firebaseConfig";
     import {
         collection,
-        getDocs,
-        onSnapshot
+        getDocs
     } from "firebase/firestore";
 
     let sProductsData = [];
@@ -40,36 +39,8 @@
         }
     };
 
-    const listenToProductChanges = () => {
-        const productsRef = collection(db, "products");
-
-        onSnapshot(productsRef, (querySnapshot) => {
-            querySnapshot.docChanges().forEach((change) => {
-                const updatedData = change.doc.data();
-
-                if (change.type === "modified") {
-                    const index = sProductsData.findIndex(
-                        (product) => product.id === change.doc.id,
-                    );
-
-                    if (index !== -1) {
-                        sProductsData[index] = {
-                            ...sProductsData[index],
-                            stock: updatedData.stock,
-                            price: updatedData.price,
-                            discountedPrice: updatedData.discountedPrice,
-                        };
-                    }
-                }
-            });
-
-            productsData.set([...sProductsData]);
-        });
-    };
-
     onMount(() => {
         getAllProducts();
-        listenToProductChanges();
     });
 
     $: {
