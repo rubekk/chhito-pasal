@@ -72,6 +72,7 @@
             (product) => product.id === productData.id,
         );
         if (i < 0) return;
+
         if (sCartProducts[i].count >= productData.stock) {
             sCartProducts[i].count = productData.stock;
             cartProducts.set([...sCartProducts]);

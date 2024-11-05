@@ -1,5 +1,5 @@
 <script>
-    import { authStore, userLocation, storeOpen, cartProducts, showCart } from "$lib/store";
+    import { authStore, userLocation, storeOpen, productsData, featuredProductsData, dailyEssentialsData, cartProducts, showCart } from "$lib/store";
     import { db } from "$lib/firebaseConfig";
     import { collection, addDoc } from "firebase/firestore";
     import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -15,6 +15,9 @@
         deliveryTime: 0,
         deliveryAvailable: false,
     };
+    let sProductsData = [];
+    let sFeaturedProductsData = [];
+    let sDailyEssentialsData = [];
     let sCartProducts = [];
     let totalPrice = 0;
     let totalSavings = 0;
@@ -29,6 +32,15 @@
     userLocation.subscribe((value) => {
         sUserLocation = value;
     });
+    productsData.subscribe(value => {
+        sProductsData = value
+    })
+    featuredProductsData.subscribe(value => {
+        sFeaturedProductsData = value
+    })
+    dailyEssentialsData.subscribe(value => {
+        sDailyEssentialsData = value
+    })
     cartProducts.subscribe((value) => {
         sCartProducts = value;
     });
@@ -117,9 +129,27 @@
                 const availableStock = productData.stock;
 
                 if (sCartProducts[index].count > availableStock) {
-                    insufficientStockMessage += `Due to high demand, ${sCartProducts[index].count} ${sCartProducts[index].productName} are not available. However, ${availableStock} remains.`;
-                    sCartProducts[index].count = availableStock;
+                    insufficientStockMessage += `Sorry, ${sCartProducts[index].productName} is out of stock`;
+                    sCartProducts[index].count = availableStock > 0 ? availableStock : 0;
                     isStockAvailable = false;
+
+                    productData.id = sCartProducts[index].id;
+
+                    updateProducts(sCartProducts[index].id, productData);
+                    updateFeaturedProducts(sCartProducts[index].id, productData);
+                    updateDailyEssentials(sCartProducts[index].id, productData);
+
+                    if(sCartProducts[index].count <= 0) sCartProducts.splice(index, 1);
+                    else {  
+                        
+                        sCartProducts[index] = productData;
+                        sCartProducts[index].count = availableStock;
+                        sCartProducts[index].totalPrice = 0;
+                        
+                        cartProducts.set(sCartProducts);
+                    }
+
+                    sCartProducts = [...sCartProducts]
                 }
             }
         });
@@ -151,22 +181,67 @@
         };
 
         try {
-            const orderRef = await addDoc(collection(db, "orders"), orderData);
+            let orderedProduct = {};
+
+            await addDoc(collection(db, "orders"), orderData);
 
             await Promise.all(
                 sCartProducts.map(async (product) => {
                     const productRef = doc(db, "products", product.id);
                     const newStock = product.stock - product.count;
+                    
                     await updateDoc(productRef, { stock: newStock });
-                }),
+
+                    orderedProduct.id = product.id;
+                    orderedProduct.discountedPrice = product.discountedPrice;
+                    orderedProduct.category = product.category;
+                    orderedProduct.productName = product.productName;
+                    orderedProduct.stock = newStock;
+                    orderedProduct.imageUrl = product.imageUrl;
+                    orderedProduct.price = product.price;
+
+                    updateProducts(orderedProduct.id, orderedProduct);
+                    updateFeaturedProducts(orderedProduct.id, orderedProduct);
+                    updateDailyEssentials(orderedProduct.id, orderedProduct);
+
+                    orderedProduct = {};
+                })
             );
 
             cartProducts.set([]);
+
             closeCart();
         } catch (error) {
             console.error("Error adding order: ", error);
         }
     };
+
+    const updateProducts = (oId, orderedProduct) => {
+        let pIndex = sProductsData.findIndex(item => item.id == oId);
+
+        if(pIndex < 0) return;
+
+        sProductsData[pIndex] = orderedProduct;
+        productsData.set(sProductsData);
+    }
+
+    const updateFeaturedProducts = (oId, orderedProduct) => {
+        let fIndex = sFeaturedProductsData.findIndex(item => item.id == oId);
+
+        if(fIndex < 0) return;
+
+        sFeaturedProductsData[fIndex] = orderedProduct;
+        featuredProductsData.set(sFeaturedProductsData);
+    }
+
+    const updateDailyEssentials = (oId, orderedProduct) => {
+        let dIndex = sDailyEssentialsData.findIndex(item => item.id == oId);
+
+        if(dIndex < 0) return;
+
+        sDailyEssentialsData[dIndex] = orderedProduct;
+        dailyEssentialsData.set(sDailyEssentialsData);
+    }
 
     $: if (sCartProducts) handleTotalPrice();
     $: deliveryCharge = totalPrice >= 300 ? 0 : 20;
