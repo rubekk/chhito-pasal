@@ -19,7 +19,7 @@
 
 <style>
     .footer {
-        padding: 3rem 0 1rem;
+        padding: 1.5rem 0 1rem;
         background: #fff;
     }
 

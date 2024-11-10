@@ -197,7 +197,7 @@
                         const isToday = currentTime < openTime;
                         const dayMessage = isToday ? "today" : "tomorrow";
 
-                        timeMessage = `We are closed now. Opening at ${formatTime(openTime)} ${dayMessage}`;
+                        timeMessage = `Closed. Opening ${dayMessage} at ${formatTime(openTime)}`;
 
                         if (checkInterval) clearInterval(checkInterval);
                     }
@@ -257,6 +257,12 @@
     });
 </script>
 
+{#if timeMessage}
+    <div class="store-messages">
+        <strong>{timeMessage}</strong>
+    </div>
+{/if}
+
 <div class="header">
     <div class="header-left">
         <h1 on:click={() => goto(`/`)}>Chitto<span>Pasal</span></h1>
@@ -309,7 +315,7 @@
                 class="header-user"
                 on:click={() => (showDropdown = !showDropdown)}
             >
-                Hi, {sAuthStore.user.displayName}
+                Hi, <span>{sAuthStore.user.displayName}</span>
                 <i class="fa-solid fa-chevron-down"></i>
             </div>
             {#if showDropdown}
@@ -347,12 +353,6 @@
         </div>
     </div>
 </div>
-
-{#if timeMessage}
-    <div class="store-messages">
-        <strong>!! {timeMessage} !!</strong>
-    </div>
-{/if}
 
 {#if showLocationPopup}
     <div
@@ -395,7 +395,8 @@
     .header {
         padding: 1rem 2rem;
         background-color: #fff;
-        background: linear-gradient(90deg, #a8e6cf, #dcedf7);
+        /* background: linear-gradient(90deg, #a8e6cf, #dcedf7); */
+        background: linear-gradient(#a8e6cf, #fff);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -418,10 +419,10 @@
     }
 
     .header-delivery-location {
-        padding: 0.5rem;
+        padding: 0.5rem 1rem;
         font-weight: bold;
-        background-color: #ecfbff;
-        border: 2px solid var(--blue);
+        background-color: #fff;
+        border: 1px solid #f1f1f1;
         border-radius: 7px;
         cursor: pointer;
     }
@@ -453,8 +454,9 @@
         width: 650px;
         height: 45px;
         font-weight: bold;
-        background-color: #f1fdff;
-        border: none;
+        background-color: #fff;
+        border: 1px solid #dcdcdc;
+        border-right: none;
         border-radius: 7px;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
@@ -472,8 +474,9 @@
         padding: 0 1rem;
         height: 45px;
         color: #888;
-        background-color: #f1fdff;
-        border: none;
+        background-color: #fff;
+        border: 1px solid #dcdcdc;
+        border-left: none;
         border-radius: 7px;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
@@ -490,10 +493,14 @@
     .header-login,
     .header-user {
         padding: 0.5rem 1rem;
-        background-color: var(--green);
-        color: #fff;
+        background-color: #d3ea27;
+        color: #797979;
         border-radius: 7px;
         cursor: pointer;
+    }
+
+    .header-user span {
+        color: #000;
     }
 
     .header-user i {
@@ -600,11 +607,10 @@
     }
 
     .store-messages {
-        padding: 1rem 0;
+        padding: 1rem 0 0;
         text-align: center;
-        color: #797979;
-        background-color: #fff;
-        border-bottom: 1px solid #dcdcdc;
+        color: #000;
+        background-color: #a8e6cf;
     }
 
     .popup-container input {

@@ -97,7 +97,7 @@
         align-items: center;
         padding: 1rem;
         background-color: #fff;
-        border: 1px solid var(--green);
+        border: 1px solid #dcdcdc;
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
@@ -110,20 +110,18 @@
         font-size: 1.25rem;
         background-color: transparent;
         border: none;
-        color: var(--blue);
         cursor: pointer;
         display: flex;
         align-items: center;
     }
 
     .back-button i {
-        margin-right: 0.5rem;
+        margin-right: 1rem;
     }
 
     .search-title {
         font-size: 1rem;
-        color: var(--blue);
-        margin-left: 1rem;
+        color: rgba(0,0,0,.8);
     }
 
     .products-container {

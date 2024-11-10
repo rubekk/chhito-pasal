@@ -139,11 +139,12 @@
     .product {
         position: relative;
         width: 200px;
+        height: 290px;
         min-width: 200px;
         max-width: 250px;
         background-color: #fff;
         border-radius: 8px; 
-        border: 1px solid #ffeded;
+        border: 1px solid #dcdcdc;
         transition: box-shadow 0.3s ease; 
         flex-grow: 1;
     }
@@ -153,7 +154,8 @@
         top: 7px;
         right: 7px;
         background-color: var(--green);
-        color: #fff;
+        background-color: #d3ea27;
+        color: #000;
         font-size: 0.7rem;
         padding: 0.3rem 0.6rem;
         border-radius: 5px;
@@ -170,9 +172,8 @@
 
     .product-text {
         margin-top: .5rem;
-        padding: 1rem 0.5rem 0.5rem .75rem;
+        padding: 0 0.5rem 0.5rem .75rem;
         font-size: 0.8rem;
-        background: #d7ffd7;
         border: 4px solid #fff;
         border-bottom: none;
         border-bottom-left-radius: 8px;
@@ -200,14 +201,13 @@
         font-size: .8rem;
         color: #000;
         background-color: #fff;
-        border: 1px solid var(--blue);
+        border: 2px solid #d3ea27;
         border-radius: 3px;
         cursor: pointer;
     }
 
     .product-add-btn:hover {
-        color: #fff;
-        background-color: var(--blue);
+        background-color: #d3ea27;
     }
 
     .out-stock-txt {
@@ -221,14 +221,14 @@
     }
 
     .cart-product-count {
-        padding: 0.5rem 0.75rem;
+        padding: 0.5rem;
     }
 
     .cart-product-minus-btn,
     .cart-product-plus-btn {
-        padding: 0.5rem;
-        color: #fff;
-        background-color: var(--blue);
+        padding: 0.4rem;
+        color: #000;
+        background-color: #d3ea27;
         border: none;
         border-radius: 5px;
     }
@@ -236,7 +236,7 @@
     .cart-product-minus-btn:hover,
     .cart-product-plus-btn:hover {
         color: white;
-        background-color: var(--blue);
+        background-color: #b1c423;
     }
 
     .product-prices {
@@ -260,9 +260,7 @@
 
     @media (max-width: 430px) {
         .product {
-            width: 175px;
-            min-width: 175px;
-            max-width: 175px;
+            min-width: 193px;
         }
     }
     @media (max-width: 385px) {

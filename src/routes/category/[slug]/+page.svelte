@@ -155,10 +155,8 @@
   .products-container {
     padding: 1rem 0;
     margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
     gap: 0.75rem;
   }
 
@@ -166,7 +164,7 @@
     padding: 1rem;
     height: 75px;
     background-color: #fff;
-    border: 1px solid var(--green);
+    border: 1px solid #dcdcdc;
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -175,7 +173,6 @@
 
   .fa-arrow-left {
     margin-right: 1rem;
-    color: var(--blue);
     cursor: pointer;
   }
 
@@ -184,7 +181,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    color: var(--blue);
+    color: rgba(0,0,0,.8);
   }
 
   .title h3 {
@@ -214,7 +211,7 @@
     padding: 0.5rem;
     margin: 0 0.5rem;
     font-size: 0.9rem;
-    border: 2px solid var(--green);
+    border: 2px solid #dcdcdc;
     border-radius: 15px;
     white-space: nowrap;
     display: flex;
@@ -235,7 +232,7 @@
   .breakdowns .active,
   .breakdown-item:hover {
     transition: 0.2s;
-    border: 2px solid var(--blue);
+    border: 2px solid #d3ea27;
   }
 
   .scroll-button {
@@ -298,6 +295,11 @@
     .page-cart {
       display: flex;
     }
+    .products-container {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+  @media (max-width: 1110px) {
   }
   @media (max-width: 800px) {
     .products-container {
