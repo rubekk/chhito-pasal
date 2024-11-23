@@ -138,13 +138,11 @@
 <style>
     .product {
         position: relative;
-        width: 200px;
-        height: 290px;
+        height: 275px;
         min-width: 200px;
         max-width: 250px;
         background-color: #fff;
         border-radius: 8px; 
-        border: 1px solid #dcdcdc;
         transition: box-shadow 0.3s ease; 
         flex-grow: 1;
     }
@@ -155,7 +153,7 @@
         right: 7px;
         background-color: var(--green);
         background-color: #d3ea27;
-        color: #000;
+        color: #3a3a3a;
         font-size: 0.7rem;
         padding: 0.3rem 0.6rem;
         border-radius: 5px;
@@ -164,14 +162,14 @@
 
     .product-img {
         margin: .5rem auto;
-        width: 75%;
-        height: 175px;
+        width: 140px;
+        height: 140px;
         display: flex;
         object-fit: contain;
     }
 
     .product-text {
-        margin-top: .5rem;
+        margin-top: 1rem;
         padding: 0 0.5rem 0.5rem .75rem;
         font-size: 0.8rem;
         border: 4px solid #fff;
@@ -190,6 +188,7 @@
     }
 
     .product-text-below {
+        margin-top: 1rem;
         font-size: 0.9rem;
         display: flex;
         justify-content: space-between;
@@ -199,14 +198,16 @@
     .product-add-btn {
         padding: 0.25rem .75rem;
         font-size: .8rem;
-        color: #000;
+        font-weight: bold;
+        color: #d3ea27;
         background-color: #fff;
-        border: 2px solid #d3ea27;
+        border: 1px solid #d3ea27;
         border-radius: 3px;
         cursor: pointer;
     }
 
     .product-add-btn:hover {
+        color: #fff;
         background-color: #d3ea27;
     }
 
@@ -247,7 +248,7 @@
 
     .discounted-price {
         font-size: 0.9rem;
-        font-weight: bold;
+        font-weight: 600;
         font-style: italic;
     }
 
@@ -258,9 +259,11 @@
         color: #797979;
     }
 
-    @media (max-width: 430px) {
+    /* media queries */
+    @media (max-width: 900px) {
         .product {
-            min-width: 193px;
+            min-width: 160px;
+            max-width: 275px;
         }
     }
     @media (max-width: 385px) {

@@ -247,8 +247,10 @@
     .products-wrapper h3,
     .categories-wrapper h3,
     .daily-essentials-wrapper h3 {
-        margin: 0 0 .5rem 0.25rem;
-        color: rgba(0,0,0,.8)
+        margin: 0 0 .75rem 0.25rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #3a3a3a;
     }
 
     .products-container,
@@ -272,7 +274,6 @@
         height: 40px;
         width: 40px;
         color: #000;
-        /* background-color: #fff; */
         background-color: #dcdcdc;
         border: 1px solid #eaeaea;
         border-radius: 50%;

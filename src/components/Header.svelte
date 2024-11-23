@@ -395,8 +395,7 @@
     .header {
         padding: 1rem 2rem;
         background-color: #fff;
-        /* background: linear-gradient(90deg, #a8e6cf, #dcedf7); */
-        background: linear-gradient(#a8e6cf, #fff);
+        background: linear-gradient(#a8e6cf, #f1fdff);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -494,7 +493,7 @@
     .header-user {
         padding: 0.5rem 1rem;
         background-color: #d3ea27;
-        color: #797979;
+        color: #3a3a3a;
         border-radius: 7px;
         cursor: pointer;
     }
@@ -520,6 +519,7 @@
         font-size: 0.9rem;
         font-weight: 700;
         color: var(--green);
+        color: #3a3a3a;
         position: absolute;
         top: -0.75rem;
         right: -0.8rem;
