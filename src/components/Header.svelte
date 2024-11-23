@@ -418,10 +418,9 @@
     }
 
     .header-delivery-location {
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 0;
         font-weight: bold;
-        background-color: #fff;
-        border: 1px solid #f1f1f1;
+        background-color: transparent;
         border-radius: 7px;
         cursor: pointer;
     }
@@ -629,6 +628,11 @@
     }
     @media (max-width: 1375px) {
         .header-search input {
+            width: 600px;
+        }
+    }
+    @media (max-width: 1375px) {
+        .header-search input {
             width: 500px;
         }
     }
@@ -637,11 +641,13 @@
         .header-right {
             gap: 1rem;
         }
-        .header-search input {
-            width: 400px;
-        }
         .dropdown {
             right: 2.25rem;
+        }
+    }
+    @media (max-width: 1375px) {
+        .header-search input {
+            width: 400px;
         }
     }
     @media (max-width: 1075px) {

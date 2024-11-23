@@ -314,5 +314,10 @@
         .categories-container {
             gap: 0.5rem;
         }
+        .products-wrapper h3,
+        .categories-wrapper h3,
+        .daily-essentials-wrapper h3 {
+            font-size: 1.1rem;
+        }
     }
 </style>
