@@ -19,18 +19,34 @@
 
 <style>
     .footer {
+        margin-top: 3rem;
         padding: 1.5rem 0 1rem;
         background: #fff;
+        position: relative;
+    }
+    
+    .footer::before {
+        content: "CHITTOPASAL";
+        font-size: 5rem; 
+        color: rgba(0, 0, 0, 0.05);
+        white-space: nowrap;
+        pointer-events: none; 
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0; 
     }
 
     .footer-content {
+        margin: 0 auto;
+        max-width: 1200px;
         display: flex;
         justify-content: space-evenly;
         align-items: center;
         flex-wrap: wrap;
         gap: 1rem;
-        max-width: 1200px;
-        margin: 0 auto;
+        position: relative;
     }
 
     .footer-item {
