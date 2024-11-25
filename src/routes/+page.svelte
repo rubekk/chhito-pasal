@@ -332,12 +332,18 @@
         }
     }
     @media (max-width: 550px) {
+        .nyakhuna-banner {
+            margin: 0 auto 3rem !important;
+            width: 90vw;
+        }
         .categories-container {
             grid-template-columns: repeat(3, 1fr);
         }
     }
     @media (max-width: 800px) {
-        .products-wrapper,
+        .nyakhuna-banner {
+            margin: 0 .5rem 3rem;
+        }
         .categories-wrapper,
         .daily-essentials-wrapper {
             padding: 1rem .5rem;
