@@ -21,8 +21,10 @@
     .footer {
         margin-top: 3rem;
         padding: 1.5rem 0 1rem;
+        max-width: 100vw;
         background: #fff;
         position: relative;
+        overflow: hidden;
     }
     
     .footer::before {
@@ -36,6 +38,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 0; 
+        overflow: hidden;
     }
 
     .footer-content {

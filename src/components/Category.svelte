@@ -37,11 +37,11 @@
         background-color: #fff;
         background: linear-gradient(#a8e6cf, #f1fdff);
         border: 2px solid #fff;
-        border-bottom: 2px solid #dcdcdc;
         border-radius: 12px; 
         display: flex;
         justify-content: center;
         align-items: center;
+        box-shadow: rgba(0, 0, 0, 0.04) 2px 2px 8px;
         position: relative; 
         cursor: pointer;
     }

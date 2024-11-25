@@ -152,6 +152,10 @@
     });
 </script>
 
+<div class="nyakhuna-banner">
+    <img src="/banners/nyakhuna-banner.png" alt="Nyakhuna">
+</div>
+
 <div class="products-wrapper">
     <h3>Featured Products</h3>
     {#if loadingFeatured}
@@ -232,6 +236,17 @@
 </div>
 
 <style>
+    .nyakhuna-banner {
+        margin-bottom: 2rem;
+        width: 500px;
+    }
+    
+    .nyakhuna-banner img {
+        width: 100%;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
     .products-wrapper,
     .daily-essentials-wrapper,
     .categories-wrapper {

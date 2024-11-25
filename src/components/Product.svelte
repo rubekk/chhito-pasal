@@ -143,6 +143,7 @@
         max-width: 250px;
         background-color: #fff;
         border-radius: 8px; 
+        box-shadow: rgba(0, 0, 0, 0.04) 2px 2px 8px;
         transition: box-shadow 0.3s ease; 
         flex-grow: 1;
     }
