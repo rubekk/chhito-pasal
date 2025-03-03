@@ -6,7 +6,7 @@
         productId: crypto.randomUUID(),
         productName: "Product name",
         price: 100,
-        discountedPrice: null, 
+        discountedPrice: null,
         stock: 0,
         imageUrl: "",
     };
@@ -31,11 +31,11 @@
         ) {
             discountPercentage = Math.round(
                 ((productData.price - productData.discountedPrice) /
-                productData.price) *
-                100,
+                    productData.price) *
+                    100,
             );
         }
-    }
+    };
 
     const handleAddClick = () => {
         if (sCartProducts.some((product) => product.id === productData.id))
@@ -89,19 +89,36 @@
 
     onMount(() => {
         calculateDiscountPercent();
-    })
+    });
 </script>
 
 <div class="product">
     {#if discountPercentage}
         <div class="discount-badge">{discountPercentage}% OFF</div>
     {/if}
-    <img class="product-img" src={`/products/${productData.imageUrl}.jpg`} alt={productData.productName}>
+    <img
+        class="product-img"
+        src={`/products/${productData.imageUrl}.jpg`}
+        alt={productData.productName}
+    />
     <div class="product-text">
         <div class="product-name">{productData.productName}</div>
         <div class="product-text-below">
             {#if !productInCart && productData.stock > 0}
-                <div class="product-add-btn" on:click={handleAddClick}>Add</div>
+                <div
+                    class="product-add-btn"
+                    on:click={handleAddClick}
+                    on:keydown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                            handleAddClick();
+                        }
+                    }}
+                    tabindex="-1"
+                    role="button"
+                    aria-pressed="false"
+                >
+                    Add
+                </div>
             {:else if productData.stock <= 0}
                 <span class="out-stock-txt">Out of Stock</span>
             {:else}
@@ -139,13 +156,14 @@
     .product {
         position: relative;
         height: 275px;
-        min-width: 200px;
-        max-width: 250px;
+        min-width: 225px;
+        max-width: 275px;
         background-color: #fff;
-        border-radius: 8px; 
-        box-shadow: rgba(0, 0, 0, 0.04) 2px 2px 8px;
-        transition: box-shadow 0.3s ease; 
+        border: 1px solid #ececec;
+        border-radius: 8px;
+        transition: box-shadow 0.3s ease;
         flex-grow: 1;
+        /* box-shadow: rgba(0, 0, 0, 0.04) 2px 2px 8px; */
     }
 
     .discount-badge {
@@ -153,8 +171,8 @@
         top: 7px;
         right: 7px;
         background-color: var(--green);
-        background-color: #d3ea27;
-        color: #3a3a3a;
+        /* background-color: #d3ea27; */
+        color: #fff;
         font-size: 0.7rem;
         padding: 0.3rem 0.6rem;
         border-radius: 5px;
@@ -162,7 +180,7 @@
     }
 
     .product-img {
-        margin: .5rem auto;
+        margin: 0.5rem auto;
         width: 140px;
         height: 140px;
         display: flex;
@@ -171,7 +189,7 @@
 
     .product-text {
         margin-top: 1rem;
-        padding: 0 0.5rem 0.5rem .75rem;
+        padding: 0 0.5rem 0.5rem 0.75rem;
         font-size: 0.8rem;
         border: 4px solid #fff;
         border-bottom: none;
@@ -183,6 +201,7 @@
         height: 45px;
         font-weight: 500;
         display: -webkit-box;
+        line-clamp: 2;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
@@ -197,19 +216,19 @@
     }
 
     .product-add-btn {
-        padding: 0.25rem .75rem;
-        font-size: .8rem;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
         font-weight: bold;
-        color: #d3ea27;
+        color: var(--green);
         background-color: #fff;
-        border: 1px solid #d3ea27;
+        border: 1px solid var(--green);
         border-radius: 3px;
         cursor: pointer;
     }
 
     .product-add-btn:hover {
         color: #fff;
-        background-color: #d3ea27;
+        background-color: var(--green);
     }
 
     .out-stock-txt {
@@ -229,8 +248,8 @@
     .cart-product-minus-btn,
     .cart-product-plus-btn {
         padding: 0.4rem;
-        color: #000;
-        background-color: #d3ea27;
+        color: #fff;
+        background-color: var(--green);
         border: none;
         border-radius: 5px;
     }
@@ -238,7 +257,7 @@
     .cart-product-minus-btn:hover,
     .cart-product-plus-btn:hover {
         color: white;
-        background-color: #b1c423;
+        background-color: var(--green);
     }
 
     .product-prices {
@@ -274,7 +293,7 @@
             max-width: 160px;
         }
         .discounted-price {
-            font-size: .7rem;
+            font-size: 0.7rem;
         }
     }
 </style>

@@ -152,9 +152,9 @@
     });
 </script>
 
-<div class="nyakhuna-banner">
+<!-- <div class="nyakhuna-banner">
     <img src="/banners/nyakhuna-banner.png" alt="Nyakhuna">
-</div>
+</div> -->
 
 <div class="products-wrapper">
     <h3>Featured Products</h3>
@@ -236,7 +236,7 @@
 </div>
 
 <style>
-    .nyakhuna-banner {
+    /* .nyakhuna-banner {
         margin-bottom: 2rem;
         width: 500px;
     }
@@ -245,7 +245,7 @@
         width: 100%;
         border-radius: 12px;
         cursor: pointer;
-    }
+    } */
 
     .products-wrapper,
     .daily-essentials-wrapper,

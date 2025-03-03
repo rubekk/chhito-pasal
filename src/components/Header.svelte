@@ -491,8 +491,8 @@
     .header-login,
     .header-user {
         padding: 0.5rem 1rem;
-        background-color: #d3ea27;
-        color: #3a3a3a;
+        background-color: var(--blue);
+        color: #fff;
         border-radius: 7px;
         cursor: pointer;
     }
